@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#0f766e"/>
+  <rect width="512" height="512" rx="112" fill="#0f52ba"/>
   <text x="256" y="322" font-family="Be Vietnam Pro, Segoe UI, Arial, sans-serif" font-size="196" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="-4">CLC</text>
   <rect x="136" y="364" width="240" height="14" rx="7" fill="#ffffff" opacity=".55"/>
 </svg>

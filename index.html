@@ -4,36 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Luyện Thi CLC</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Ctext x='16' y='21' font-family='sans-serif' font-size='13' font-weight='700' fill='white' text-anchor='middle'%3ECLC%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f52ba'/%3E%3Ctext x='16' y='21' font-family='sans-serif' font-size='13' font-weight='700' fill='white' text-anchor='middle'%3ECLC%3C/text%3E%3C/svg%3E">
 <meta name="description"content="Ôn luyện và thi thử vào lớp Chất Lượng Cao: trắc nghiệm theo môn, thi thử có tính giờ, thống kê điểm, nhập đề từ Excel/Word.">
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#0f52ba">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* Bảng màu xanh – trắng (theo "Monochromatic Color Palette" #002B8C): Oceanic Azure #002B8C, Dusk Blue #3E5D8E, Sapphire #0F52BA, Azure #F0FFFF, Indigo Blue #282888 */
 :root{
-  --nen:#faf7f2; --the:#ffffff; --chu:#1c2733; --phu:#5b6776; --vien:#e4ddd0;
-  --nhan:#0f766e; --nhan-dam:#0b5c56; --nhan-nhat:#d9efec; --tren-nhan:#ffffff;
+  --nen:#f3f7fe; --the:#ffffff; --chu:#0c1a3d; --phu:#3e5d8e; --vien:#d3dff2;
+  --nhan:#0f52ba; --nhan-dam:#002b8c; --nhan-nhat:#e4eefc; --tren-nhan:#ffffff;
   --dung:#1a7f4b; --dung-nen:#e0f4e8; --sai:#c0392b; --sai-nen:#fbe4e1;
   --vang:#9a6a12; --vang-nen:#fdf0d5;
-  --bong:0 1px 2px rgba(28,39,51,.06),0 6px 18px rgba(28,39,51,.05);
+  --bong:0 1px 2px rgba(0,43,140,.07),0 6px 18px rgba(0,43,140,.07);
   --bk:14px;
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --nen:#14181d; --the:#1d232b; --chu:#e8ecf1; --phu:#98a3b0; --vien:#2f3844;
-    --nhan:#4cc2b6; --nhan-dam:#7fd8cf; --nhan-nhat:#1c3a38; --tren-nhan:#0b1f1d;
-    --dung:#5fd08f; --dung-nen:#1b3a2a; --sai:#ff8a7a; --sai-nen:#3d1f1c;
-    --vang:#e5b85c; --vang-nen:#3a2f17;
-    --bong:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
+    --nen:#0a1330; --the:#111d45; --chu:#e7eefc; --phu:#9db4dc; --vien:#25396a;
+    --nhan:#6ea3f5; --nhan-dam:#a9c8fa; --nhan-nhat:#18295a; --tren-nhan:#06122e;
+    --dung:#5fd08f; --dung-nen:#17382f; --sai:#ff8a7a; --sai-nen:#3d1f2a;
+    --vang:#e5b85c; --vang-nen:#3a3017;
+    --bong:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.3);
   }
 }
-/* Mục TIMO dùng tông chàm để phân biệt với mục CLC (xanh ngọc) */
-:root[data-bo=timo]{--nhan:#4338ca;--nhan-dam:#312e81;--nhan-nhat:#e4e2fb;--tren-nhan:#ffffff}
+/* Mục TIMO dùng Indigo Blue (#282888) để phân biệt với mục CLC (Sapphire #0F52BA) */
+:root[data-bo=timo]{--nhan:#282888;--nhan-dam:#1a1a66;--nhan-nhat:#e7e7f8;--tren-nhan:#ffffff}
 @media (prefers-color-scheme:dark){
-  :root[data-bo=timo]{--nhan:#a5a3f7;--nhan-dam:#c9c7fb;--nhan-nhat:#26264d;--tren-nhan:#14143a}
+  :root[data-bo=timo]{--nhan:#9d9df2;--nhan-dam:#c6c6f8;--nhan-nhat:#22224f;--tren-nhan:#10103a}
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -1863,7 +1864,7 @@ function ganBoDe() {
   const b = BO_DE[boDe];
   document.documentElement.dataset.bo = boDe;
   document.title = b.ten;
-  document.querySelector('meta[name=theme-color]')?.setAttribute('content', boDe === 'timo' ? '#4338ca' : '#0f766e');
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', boDe === 'timo' ? '#282888' : '#0f52ba');
   document.getElementById('th-nhan').textContent = b.nhan;
   document.getElementById('th-ten').textContent = b.ten;
   document.querySelectorAll('#bode button').forEach(n => n.setAttribute('aria-pressed', String(n.dataset.bo === boDe)));
