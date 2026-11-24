@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* Bảng màu xanh – trắng (theo "Monochromatic Color Palette" #002B8C): Oceanic Azure #002B8C, Dusk Blue #3E5D8E, Sapphire #0F52BA, Azure #F0FFFF, Indigo Blue #282888 */
 :root{
@@ -44,25 +44,70 @@ h1,h2,h3{line-height:1.3;margin:0}
 p{margin:.4em 0}
 a{color:var(--nhan)}
 
-.dau-trang{position:sticky;top:0;z-index:20;background:var(--nen);border-bottom:1px solid var(--vien)}
-.dau-trang__trong{max-width:920px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.thuong-hieu{font-weight:700;font-size:1.5rem;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;white-space:nowrap}
-.thuong-hieu b{display:inline-grid;place-items:center;min-width:56px;height:56px;padding:0 12px;border-radius:16px;background:var(--nhan);color:var(--tren-nhan);font-size:1.15rem;letter-spacing:.01em;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-@media (max-width:560px){
-  .thuong-hieu{font-size:1.2rem;gap:10px}
-  .thuong-hieu b{min-width:46px;height:46px;border-radius:13px;font-size:.95rem}
+/* Banner: dải xanh đậm có nền giấy kẻ ô, bên phải là phiếu trả lời (CLC) hoặc hình học (TIMO); thanh chức năng dính phía dưới */
+:root{--b1:#002b8c;--b2:#0f52ba;--b3:#3d86e6}
+:root[data-bo=timo]{--b1:#12124a;--b2:#282888;--b3:#4a4ac2}
+.banner{position:relative;overflow:hidden;color:#fff;background:linear-gradient(118deg,var(--b1) 0%,var(--b2) 56%,var(--b3) 100%)}
+.banner::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,.085) 1px,transparent 1px) 0 0/26px 26px,linear-gradient(90deg,rgba(255,255,255,.085) 1px,transparent 1px) 0 0/26px 26px;
+  -webkit-mask-image:linear-gradient(100deg,transparent 22%,#000 88%);mask-image:linear-gradient(100deg,transparent 22%,#000 88%)}
+.banner::after{content:"";position:absolute;right:-110px;top:-150px;width:420px;height:420px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.2),rgba(255,255,255,0) 66%)}
+.banner__trong{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:28px 16px 26px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+.banner__chu{display:flex;flex-direction:column;align-items:flex-start;gap:18px;min-width:0}
+.thuong-hieu{display:flex;align-items:center;gap:16px;min-width:0}
+.thuong-hieu b{flex:none;display:inline-grid;place-items:center;min-width:66px;height:66px;padding:0 12px;border-radius:19px;background:#fff;color:var(--b2);font-size:1.2rem;font-weight:800;letter-spacing:-.01em;box-shadow:0 10px 24px rgba(0,16,70,.32)}
+.banner__ten{display:block;font-size:2.05rem;font-weight:800;letter-spacing:-.03em;line-height:1.08}
+.banner__mota{margin:7px 0 0;max-width:36ch;text-wrap:balance;font-size:.98rem;font-weight:500;line-height:1.45;color:rgba(255,255,255,.86)}
+.bo-de{display:inline-flex;padding:3px;border-radius:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.32)}
+.bo-de button{border:0;background:none;padding:6px 18px;border-radius:9px;cursor:pointer;font-weight:700;font-size:.88rem;letter-spacing:.02em;color:#fff}
+.bo-de button:hover{background:rgba(255,255,255,.16)}
+.bo-de button[aria-pressed=true]{background:#fff;color:var(--b2)}
+.bo-de button:focus-visible,.menu button:focus-visible{outline:3px solid #9cc4ff;outline-offset:2px}
+.banner__hinh{flex:none;width:300px;margin-right:4px}
+.banner__hinh svg{display:none;width:100%;height:auto;filter:drop-shadow(0 14px 22px rgba(0,16,70,.38))}
+:root:not([data-bo=timo]) .banner__hinh .hinh-clc{display:block}
+:root[data-bo=timo] .banner__hinh .hinh-timo{display:block}
+.chon-c{animation:to-bong .55s .45s both}
+.chon-c-chu{animation:doi-chu .55s .45s both}
+@keyframes to-bong{from{fill-opacity:0}to{fill-opacity:1}}
+@keyframes doi-chu{from{fill:#fff}to{fill:var(--b2)}}
+@media (prefers-reduced-motion:reduce){.chon-c,.chon-c-chu{animation:none}}
+@media (max-width:700px){
+  .banner__hinh{display:none}
+  .banner__trong{padding:20px 16px 18px}
+  .thuong-hieu b{min-width:54px;height:54px;border-radius:16px;font-size:1rem}
+  .banner__ten{font-size:1.55rem}
+  .banner__mota{font-size:.9rem}
 }
-.bo-de{display:inline-flex;padding:3px;border:1px solid var(--vien);border-radius:10px;background:var(--the)}
-.bo-de button{border:0;background:none;padding:5px 14px;border-radius:7px;cursor:pointer;font-weight:700;font-size:.85rem;letter-spacing:.02em;color:var(--phu)}
-.bo-de button:hover{color:var(--nhan-dam)}
-.bo-de button[aria-pressed=true]{background:var(--nhan);color:var(--tren-nhan)}
-.menu{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.thanh-menu{position:sticky;top:0;z-index:20;background:var(--the);border-bottom:1px solid var(--vien);box-shadow:0 6px 16px rgba(0,43,140,.06)}
+.menu{max-width:920px;margin:0 auto;padding:7px 12px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 .menu::-webkit-scrollbar{display:none}
-.menu button{background:none;border:0;padding:8px 12px;border-radius:9px;cursor:pointer;color:var(--phu);font-weight:500;white-space:nowrap}
+.menu button{background:none;border:0;padding:8px 14px;border-radius:9px;cursor:pointer;color:var(--phu);font-weight:500;white-space:nowrap}
 .menu button:hover{background:var(--nhan-nhat);color:var(--nhan-dam)}
-.menu button[aria-current=page]{background:var(--nhan-nhat);color:var(--nhan-dam);font-weight:600}
+.menu button[aria-current=page]{background:var(--nhan-nhat);color:var(--nhan-dam);font-weight:700}
 
-main{flex:1 0 auto;width:100%;max-width:920px;margin:0 auto;padding:20px 16px 48px}
+/* Khung 3 cột: hai bên là "sổ ghi chú" công thức Toán, Lý, Hóa và hình Tin học (chỉ hiện khi màn hình đủ rộng), giữa là nội dung */
+.khung{flex:1 0 auto;display:flex;justify-content:center;align-items:flex-start;width:100%}
+main{flex:0 1 920px;min-width:0;max-width:920px;margin:0;padding:20px 16px 48px}
+.canh{display:none}
+@media (min-width:1280px){
+  .canh{display:flex;flex:1 1 0;min-width:0;max-width:280px;flex-direction:column;gap:30px;padding:34px 14px 40px;position:sticky;top:66px;pointer-events:none;user-select:none}
+}
+.canh svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 8px 16px rgba(0,43,140,.1))}
+.canh svg:nth-child(odd){transform:rotate(-1.8deg)}
+.canh svg:nth-child(even){transform:rotate(1.5deg)}
+.canh .the{fill:var(--the);stroke:var(--vien);stroke-width:1.2}
+.canh .net{fill:none;stroke:var(--nhan);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.canh .mong{fill:none;stroke:var(--phu);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.canh .nen-nhat{fill:var(--nhan-nhat);stroke:none}
+.canh .dac{fill:var(--nhan);stroke:none}
+.canh text{fill:var(--chu);font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",serif}
+.canh .nhan{fill:var(--phu);font-size:13px;font-style:italic}
+.canh .lon{font-size:25px}
+.canh .vua{font-size:19px}
+.canh .ma{font-family:"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;font-size:11.5px}
+.canh .tu{fill:var(--nhan);font-weight:700}
+.canh .chuoi{fill:var(--phu)}
 .chan-trang{flex:none;width:100%;max-width:920px;margin:0 auto;padding:20px 16px 32px;border-top:1px solid var(--vien);color:var(--phu);font-size:.85rem;text-align:center}
 .the{background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:18px;margin:0 0 16px;box-shadow:var(--bong)}
 .tieu-de{margin:4px 0 16px}
@@ -127,7 +172,7 @@ textarea{min-height:90px;resize:vertical}
 
 .tien-do{height:8px;border-radius:99px;background:var(--vien);overflow:hidden;margin:0 0 14px}
 .tien-do i{display:block;height:100%;background:var(--nhan);transition:width .25s}
-.thanh-thi{position:sticky;top:88px;z-index:10;display:flex;align-items:center;gap:14px;background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:10px 14px;margin:0 0 16px;box-shadow:var(--bong)}
+.thanh-thi{position:sticky;top:62px;z-index:10;display:flex;align-items:center;gap:14px;background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:10px 14px;margin:0 0 16px;box-shadow:var(--bong)}
 .dong-ho{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.4rem;color:var(--nhan-dam)}
 .dong-ho.gap{color:var(--sai)}
 .luoi-cau{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:8px}
@@ -205,14 +250,99 @@ ul.loi{margin:6px 0 0;padding-left:20px;color:var(--sai);font-size:.85rem}
 </style>
 </head>
 <body>
-<header class="dau-trang">
-  <div class="dau-trang__trong">
-    <div class="thuong-hieu"><b id="th-nhan">CLC</b> <span id="th-ten">Luyện Thi CLC</span></div>
-    <div class="bo-de" id="bode" role="group" aria-label="Chọn mục luyện thi"></div>
-    <nav class="menu" id="menu" aria-label="Chức năng"></nav>
+<header class="banner">
+  <div class="banner__trong">
+    <div class="banner__chu">
+      <div class="thuong-hieu"><b id="th-nhan">CLC</b>
+        <div><span class="banner__ten" id="th-ten">Luyện Thi CLC</span><p class="banner__mota" id="th-mota"></p></div></div>
+      <div class="bo-de" id="bode" role="group" aria-label="Chọn mục luyện thi"></div>
+    </div>
+    <div class="banner__hinh" aria-hidden="true">
+      <svg class="hinh-clc" viewBox="0 0 300 170" focusable="false">
+        <g transform="rotate(-4 150 85)">
+          <rect x="10" y="10" width="280" height="150" rx="20" fill="#fff" fill-opacity=".13" stroke="#fff" stroke-opacity=".38"/>
+          <rect x="34" y="34" width="150" height="9" rx="4.5" fill="#fff" fill-opacity=".75"/>
+          <rect x="34" y="54" width="214" height="9" rx="4.5" fill="#fff" fill-opacity=".42"/>
+          <g font-family="Be Vietnam Pro,system-ui,sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#fff">
+            <circle cx="58" cy="116" r="21" fill="none" stroke="#fff" stroke-width="2.5"/><text x="58" y="121.5">A</text>
+            <circle cx="120" cy="116" r="21" fill="none" stroke="#fff" stroke-width="2.5"/><text x="120" y="121.5">B</text>
+            <circle class="chon-c" cx="182" cy="116" r="21" fill="#fff" stroke="#fff" stroke-width="2.5"/><text class="chon-c-chu" x="182" y="121.5" fill="#0f52ba">C</text>
+            <circle cx="244" cy="116" r="21" fill="none" stroke="#fff" stroke-width="2.5"/><text x="244" y="121.5">D</text>
+          </g>
+        </g>
+      </svg>
+      <svg class="hinh-timo" viewBox="0 0 300 170" focusable="false">
+        <g transform="rotate(-4 150 85)">
+          <rect x="10" y="10" width="280" height="150" rx="20" fill="#fff" fill-opacity=".13" stroke="#fff" stroke-opacity=".38"/>
+          <polygon points="150,34 66,130 234,130" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="150" cy="92" r="38" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+          <line x1="150" y1="34" x2="150" y2="130" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-dasharray="5 5"/>
+          <g font-family="Be Vietnam Pro,system-ui,sans-serif" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">
+            <text x="150" y="27">A</text><text x="52" y="146">B</text><text x="248" y="146">C</text>
+          </g>
+        </g>
+      </svg>
+    </div>
   </div>
 </header>
+<div class="thanh-menu"><nav class="menu" id="menu" aria-label="Chức năng"></nav></div>
+<div class="khung">
+<aside class="canh canh--trai" aria-hidden="true">
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <polygon class="nen-nhat" points="26,112 26,38 106,112"/><polygon class="net" points="26,112 26,38 106,112"/>
+    <path class="net" d="M26 99h13v13"/>
+    <text class="nhan" x="12" y="80">a</text><text class="nhan" x="64" y="130">b</text><text class="nhan" x="70" y="68">c</text>
+    <text class="vua" x="128" y="72">a² + b²</text><text class="vua" x="128" y="100">= c²</text>
+  </svg>
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <g transform="translate(64 76)">
+      <ellipse class="net" rx="42" ry="15"/><ellipse class="net" rx="42" ry="15" transform="rotate(60)"/><ellipse class="net" rx="42" ry="15" transform="rotate(120)"/>
+      <circle class="dac" r="6"/><circle class="dac" cx="42" cy="0" r="3.6"/><circle class="dac" cx="-21" cy="-36.4" r="3.6" /><circle class="dac" cx="-21" cy="36.4" r="3.6"/>
+    </g>
+    <text class="lon" x="124" y="86">E = mc²</text>
+  </svg>
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <polygon class="nen-nhat" points="66,38 98.9,57 98.9,95 66,114 33.1,95 33.1,57"/>
+    <polygon class="net" points="66,38 98.9,57 98.9,95 66,114 33.1,95 33.1,57"/>
+    <path class="net" d="M69.1 47.9L88.8 59.3M88.8 92.7L69.1 104.1M40.1 87.4V64.6"/>
+    <text class="lon" x="128" y="86">C₆H₆</text>
+  </svg>
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <g class="net"><path d="M60 40L35 76M60 40L85 76M35 76L22 110M35 76L48 110M85 76L72 110M85 76L98 110"/></g>
+    <g class="dac"><circle cx="60" cy="40" r="8"/><circle cx="35" cy="76" r="8"/><circle cx="85" cy="76" r="8"/><circle cx="22" cy="110" r="7"/><circle cx="48" cy="110" r="7"/><circle cx="72" cy="110" r="7"/><circle cx="98" cy="110" r="7"/></g>
+    <text class="vua" x="124" y="72">O(log n)</text><text class="ma chuoi" x="124" y="96">0110 1001</text>
+  </svg>
+</aside>
 <main id="app"></main>
+<aside class="canh canh--phai" aria-hidden="true">
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <rect class="nen-nhat" x="1" y="1" width="238" height="26" rx="16"/><rect class="nen-nhat" x="1" y="14" width="238" height="13"/>
+    <circle class="dac" cx="18" cy="14" r="4" opacity=".9"/><circle class="dac" cx="32" cy="14" r="4" opacity=".6"/><circle class="dac" cx="46" cy="14" r="4" opacity=".35"/>
+    <text class="ma" x="16" y="56"><tspan class="tu">def</tspan> chao(ten):</text>
+    <text class="ma" x="16" y="78">  <tspan class="tu">print</tspan>(<tspan class="chuoi">"Xin chào"</tspan>, ten)</text>
+    <text class="ma" x="16" y="108">chao(<tspan class="chuoi">"CLC"</tspan>)</text>
+    <text class="ma chuoi" x="16" y="132">&lt;/&gt;  &#123; &#125;  [ ]</text>
+  </svg>
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <text class="lon" x="16" y="62">∫</text><text class="nhan" x="31" y="38">π</text><text class="nhan" x="30" y="74">0</text><text class="vua" x="44" y="58">sin x dx = 2</text>
+    <path class="mong" d="M24 126H220M30 84V138"/>
+    <path class="nen-nhat" d="M30 126C50 92 70 92 90 126Z"/>
+    <path class="net" d="M30 126C50 92 70 92 90 126S130 160 150 126S190 92 210 126"/>
+  </svg>
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <path class="net" d="M30 42H56l6-10 10 20 10-20 10 20 6-10H132V112H30V86M30 42V68"/>
+    <path class="net" d="M19 68H41M25 78H35"/><path class="net" d="M30 78V86"/>
+    <text class="nhan" x="44" y="76">+</text>
+    <text class="lon" x="140" y="84">U = I·R</text>
+  </svg>
+  <svg viewBox="0 0 240 150" focusable="false"><rect class="the" x="1" y="1" width="238" height="148" rx="16"/>
+    <text class="vua" x="16" y="50">2H₂ + O₂ → 2H₂O</text>
+    <path class="net" d="M120 98L100 118M120 98L140 118"/>
+    <circle class="dac" cx="120" cy="96" r="15"/><circle class="the" cx="98" cy="119" r="9" style="stroke:var(--nhan);stroke-width:2.2"/><circle class="the" cx="142" cy="119" r="9" style="stroke:var(--nhan);stroke-width:2.2"/>
+    <text class="nhan" x="168" y="112">H₂O</text>
+  </svg>
+</aside>
+</div>
 <footer class="chan-trang">
   <div id="chan-nut"></div>
   Copyright of C.T.Dzung © <span id="nam">2026</span>
@@ -227,10 +357,10 @@ ul.loi{margin:6px 0 0;padding-left:20px;color:var(--sai);font-size:.85rem}
    ============================================================ */
 // Hai mục luyện thi tách riêng: mỗi mục có ngân hàng câu hỏi, lịch sử, thống kê và bài thi dở dang riêng.
 const BO_DE = {
-  clc: { tienTo: 'clc.', nhan: 'CLC', ten: 'Luyện Thi CLC', tieuDe: 'Luyện thi vào lớp Chất Lượng Cao',
+  clc: { tienTo: 'clc.', nhan: 'CLC', ten: 'Luyện Thi CLC', khauHieu: 'Luyện đề, thi thử và theo dõi tiến bộ mỗi ngày', tieuDe: 'Luyện thi vào lớp Chất Lượng Cao',
          moTa: 'Làm trắc nghiệm theo môn, thi thử có tính giờ và theo dõi tiến bộ qua từng lần làm bài.', soCau: 20, phut: 30,
          diemCau: 0, thang: 10 },   // diemCau 0 = chấm theo thang 10
-  timo: { tienTo: 'timo.', nhan: 'TIMO', ten: 'Luyện Thi TIMO', tieuDe: 'Luyện thi Toán TIMO',
+  timo: { tienTo: 'timo.', nhan: 'TIMO', ten: 'Luyện Thi TIMO', khauHieu: 'Rèn tư duy toán, thi thử đủ 25 câu trong 120 phút', tieuDe: 'Luyện thi Toán TIMO',
           moTa: 'Rèn tư duy toán theo từng dạng: số học, hình học, tổ hợp & logic, quy luật. Đề thi thử tối đa 25 câu, mỗi câu 4 điểm (tối đa 100 điểm), làm trong 120 phút.',
           soCau: 25, toiDaCau: 25, phut: 120, diemCau: 4, thang: 100, monMacDinh: 'Toán' }
 };
@@ -1867,6 +1997,7 @@ function ganBoDe() {
   document.querySelector('meta[name=theme-color]')?.setAttribute('content', boDe === 'timo' ? '#282888' : '#0f52ba');
   document.getElementById('th-nhan').textContent = b.nhan;
   document.getElementById('th-ten').textContent = b.ten;
+  document.getElementById('th-mota').textContent = b.khauHieu;
   document.querySelectorAll('#bode button').forEach(n => n.setAttribute('aria-pressed', String(n.dataset.bo === boDe)));
 }
 function doiBoDe(k) {

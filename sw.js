@@ -2,12 +2,12 @@
    - File của app (cùng nguồn): ưu tiên mạng để luôn có bản mới nhất, mất mạng thì dùng bản đã lưu.
    - Thư viện và phông chữ từ CDN (KaTeX, SheetJS, pdf.js, mammoth, Google Fonts): dùng bản đã lưu và cập nhật nền.
    Đổi PHIEN_BAN khi thêm/bớt file trong DANH_SACH để người dùng nhận bộ nhớ đệm mới. */
-const PHIEN_BAN = 'luyenthi-v2';
+const PHIEN_BAN = 'luyenthi-v3';
 const DANH_SACH = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 const TAI_SAN = [          // tải sẵn lúc cài để công thức toán vẫn hiện khi offline
   'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css',
-  'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap'
+  'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap'
 ];
 const MAY_CHU_NGOAI = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdnjs.cloudflare.com', 'cdn.jsdelivr.net'];
 
