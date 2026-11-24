@@ -1,0 +1,1899 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luyện Thi CLC</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Ctext x='16' y='21' font-family='sans-serif' font-size='13' font-weight='700' fill='white' text-anchor='middle'%3ECLC%3C/text%3E%3C/svg%3E">
+<meta name="description"content="Ôn luyện và thi thử vào lớp Chất Lượng Cao: trắc nghiệm theo môn, thi thử có tính giờ, thống kê điểm, nhập đề từ Excel/Word.">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nen:#faf7f2; --the:#ffffff; --chu:#1c2733; --phu:#5b6776; --vien:#e4ddd0;
+  --nhan:#0f766e; --nhan-dam:#0b5c56; --nhan-nhat:#d9efec; --tren-nhan:#ffffff;
+  --dung:#1a7f4b; --dung-nen:#e0f4e8; --sai:#c0392b; --sai-nen:#fbe4e1;
+  --vang:#9a6a12; --vang-nen:#fdf0d5;
+  --bong:0 1px 2px rgba(28,39,51,.06),0 6px 18px rgba(28,39,51,.05);
+  --bk:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --nen:#14181d; --the:#1d232b; --chu:#e8ecf1; --phu:#98a3b0; --vien:#2f3844;
+    --nhan:#4cc2b6; --nhan-dam:#7fd8cf; --nhan-nhat:#1c3a38; --tren-nhan:#0b1f1d;
+    --dung:#5fd08f; --dung-nen:#1b3a2a; --sai:#ff8a7a; --sai-nen:#3d1f1c;
+    --vang:#e5b85c; --vang-nen:#3a2f17;
+    --bong:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
+  }
+}
+/* Mục TIMO dùng tông chàm để phân biệt với mục CLC (xanh ngọc) */
+:root[data-bo=timo]{--nhan:#4338ca;--nhan-dam:#312e81;--nhan-nhat:#e4e2fb;--tren-nhan:#ffffff}
+@media (prefers-color-scheme:dark){
+  :root[data-bo=timo]{--nhan:#a5a3f7;--nhan-dam:#c9c7fb;--nhan-nhat:#26264d;--tren-nhan:#14143a}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--nen);color:var(--chu);font:16px/1.55 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{line-height:1.3;margin:0}
+p{margin:.4em 0}
+a{color:var(--nhan)}
+
+.dau-trang{position:sticky;top:0;z-index:20;background:var(--nen);border-bottom:1px solid var(--vien)}
+.dau-trang__trong{max-width:920px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.thuong-hieu{font-weight:700;font-size:1.5rem;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;white-space:nowrap}
+.thuong-hieu b{display:inline-grid;place-items:center;min-width:56px;height:56px;padding:0 12px;border-radius:16px;background:var(--nhan);color:var(--tren-nhan);font-size:1.15rem;letter-spacing:.01em;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+@media (max-width:560px){
+  .thuong-hieu{font-size:1.2rem;gap:10px}
+  .thuong-hieu b{min-width:46px;height:46px;border-radius:13px;font-size:.95rem}
+}
+.bo-de{display:inline-flex;padding:3px;border:1px solid var(--vien);border-radius:10px;background:var(--the)}
+.bo-de button{border:0;background:none;padding:5px 14px;border-radius:7px;cursor:pointer;font-weight:700;font-size:.85rem;letter-spacing:.02em;color:var(--phu)}
+.bo-de button:hover{color:var(--nhan-dam)}
+.bo-de button[aria-pressed=true]{background:var(--nhan);color:var(--tren-nhan)}
+.menu{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.menu::-webkit-scrollbar{display:none}
+.menu button{background:none;border:0;padding:8px 12px;border-radius:9px;cursor:pointer;color:var(--phu);font-weight:500;white-space:nowrap}
+.menu button:hover{background:var(--nhan-nhat);color:var(--nhan-dam)}
+.menu button[aria-current=page]{background:var(--nhan-nhat);color:var(--nhan-dam);font-weight:600}
+
+main{flex:1 0 auto;width:100%;max-width:920px;margin:0 auto;padding:20px 16px 48px}
+.chan-trang{flex:none;width:100%;max-width:920px;margin:0 auto;padding:20px 16px 32px;border-top:1px solid var(--vien);color:var(--phu);font-size:.85rem;text-align:center}
+.the{background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:18px;margin:0 0 16px;box-shadow:var(--bong)}
+.tieu-de{margin:4px 0 16px}
+.tieu-de h1{font-size:1.5rem;letter-spacing:-.01em}
+.tieu-de p{color:var(--phu)}
+.luoi{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.so-lieu{background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:14px 16px}
+.so-lieu b{display:block;font-size:1.6rem;line-height:1.2;letter-spacing:-.02em}
+.so-lieu span{color:var(--phu);font-size:.875rem}
+.hanh-dong{display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;cursor:pointer;background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:16px;box-shadow:var(--bong);transition:border-color .15s,transform .15s}
+.hanh-dong:hover{border-color:var(--nhan);transform:translateY(-1px)}
+.hanh-dong strong{font-size:1.05rem}
+.hanh-dong span{color:var(--phu);font-size:.9rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:10px;border:1px solid var(--nhan);background:var(--nhan);color:var(--tren-nhan);font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--nhan-dam);border-color:var(--nhan-dam)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.vien{background:transparent;color:var(--nhan-dam);border-color:var(--vien)}
+.btn.vien:hover{border-color:var(--nhan);background:var(--nhan-nhat)}
+.btn.nguy{background:transparent;color:var(--sai);border-color:var(--vien)}
+.btn.nguy:hover{border-color:var(--sai);background:var(--sai-nen)}
+.btn.nho{padding:6px 12px;font-size:.875rem;border-radius:8px}
+.hang{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hang.giua{justify-content:space-between}
+.co-gian{flex:1}
+
+.truong{display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.truong label,.nhan{font-weight:600;font-size:.9rem}
+.truong small{color:var(--phu)}
+input[type=text],input[type=number],select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--vien);background:var(--nen)}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--nhan);outline-offset:2px}
+textarea{min-height:90px;resize:vertical}
+.chon-mon{display:flex;flex-wrap:wrap;gap:8px}
+.chon-mon label{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--vien);border-radius:999px;cursor:pointer;font-weight:500;font-size:.9rem}
+.chon-mon input{accent-color:var(--nhan)}
+.chon-mon label:has(input:checked){background:var(--nhan-nhat);border-color:var(--nhan);color:var(--nhan-dam)}
+.hai-cot{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media (max-width:560px){.hai-cot{grid-template-columns:1fr}}
+
+.meta{color:var(--phu);font-size:.85rem;margin-bottom:6px}
+.cau-nd{font-size:1.1rem;font-weight:600;white-space:pre-wrap;margin:4px 0 14px}
+.dap-an{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px 14px;margin:0 0 10px;border:1px solid var(--vien);border-radius:12px;background:var(--the);cursor:pointer}
+.dap-an:hover:not(:disabled){border-color:var(--nhan)}
+.dap-an .chu-cai{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;background:var(--nhan-nhat);color:var(--nhan-dam)}
+.dap-an.chon{border-color:var(--nhan);background:var(--nhan-nhat)}
+.dap-an.chon .chu-cai{background:var(--nhan);color:var(--tren-nhan)}
+.dap-an.dung{border-color:var(--dung);background:var(--dung-nen)}
+.dap-an.dung .chu-cai{background:var(--dung);color:var(--the)}
+.dap-an.sai{border-color:var(--sai);background:var(--sai-nen)}
+.dap-an.sai .chu-cai{background:var(--sai);color:var(--the)}
+.dap-an:disabled{cursor:default}
+.dap-an span.nd{white-space:pre-wrap;padding-top:2px}
+.dien-hang{flex-wrap:nowrap;margin:0 0 10px}
+.o-dien{font-size:1.1rem;font-weight:600}
+.dien-hang .o-dien{flex:1;min-width:0}
+.o-dien.dung{border-color:var(--dung);background:var(--dung-nen)}
+.o-dien.sai{border-color:var(--sai);background:var(--sai-nen)}
+.giai-thich{border-radius:12px;padding:12px 14px;margin:6px 0 14px;background:var(--vang-nen);color:var(--chu);white-space:pre-wrap}
+.giai-thich b{color:var(--vang)}
+.phan-hoi{font-weight:700;margin:4px 0}
+.phan-hoi.dung{color:var(--dung)} .phan-hoi.sai{color:var(--sai)}
+
+.tien-do{height:8px;border-radius:99px;background:var(--vien);overflow:hidden;margin:0 0 14px}
+.tien-do i{display:block;height:100%;background:var(--nhan);transition:width .25s}
+.thanh-thi{position:sticky;top:88px;z-index:10;display:flex;align-items:center;gap:14px;background:var(--the);border:1px solid var(--vien);border-radius:var(--bk);padding:10px 14px;margin:0 0 16px;box-shadow:var(--bong)}
+.dong-ho{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.4rem;color:var(--nhan-dam)}
+.dong-ho.gap{color:var(--sai)}
+.luoi-cau{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:8px}
+.luoi-cau button{height:40px;border-radius:9px;border:1px solid var(--vien);background:var(--the);cursor:pointer;font-weight:600;position:relative}
+.luoi-cau button.da{background:var(--nhan-nhat);border-color:var(--nhan)}
+.luoi-cau button.hien{outline:2px solid var(--nhan);outline-offset:1px}
+.luoi-cau button.dau::after{content:"";position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--vang)}
+.chu-giai{display:flex;gap:14px;flex-wrap:wrap;color:var(--phu);font-size:.8rem;margin-top:10px}
+
+.diem-lon{font-size:3.2rem;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--nhan-dam)}
+.diem-lon small{font-size:1.1rem;color:var(--phu);font-weight:500}
+.thanh{display:grid;grid-template-columns:110px 1fr 70px;gap:10px;align-items:center;margin:8px 0;font-size:.9rem}
+.thanh .nen{height:10px;border-radius:99px;background:var(--vien);overflow:hidden}
+.thanh .nen i{display:block;height:100%;background:var(--nhan)}
+.thanh output{text-align:right;color:var(--phu);font-variant-numeric:tabular-nums}
+.bieu-do{display:flex;align-items:flex-end;gap:6px;height:150px;padding:8px 0 0;border-bottom:1px solid var(--vien)}
+.bieu-do .cot{flex:1;min-width:8px;background:var(--nhan);border-radius:5px 5px 0 0;position:relative;min-height:3px}
+.bieu-do .cot.thi{background:var(--vang)}
+.bieu-do .cot span{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.7rem;color:var(--phu);font-variant-numeric:tabular-nums}
+.chu-giai i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;background:var(--nhan)}
+.chu-giai i.thi{background:var(--vang)}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--vien)}
+th{color:var(--phu);font-weight:600;font-size:.8rem}
+.tem{display:inline-block;padding:2px 9px;border-radius:99px;font-size:.75rem;font-weight:600;background:var(--nhan-nhat);color:var(--nhan-dam)}
+.tem.thi{background:var(--vang-nen);color:var(--vang)}
+.tem.sai{background:var(--sai-nen);color:var(--sai)}
+.tem.dung{background:var(--dung-nen);color:var(--dung)}
+
+.dong-cau{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--vien)}
+.dong-cau:last-child{border-bottom:0}
+.dong-cau .nd{flex:1;min-width:0}
+.dong-cau .nd p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0}
+.xem-lai{border-left:4px solid var(--vien);padding-left:14px;margin:0 0 18px}
+.xem-lai.dung{border-color:var(--dung)} .xem-lai.sai{border-color:var(--sai)} .xem-lai.bo{border-color:var(--vang)}
+.thong-bao{border-radius:12px;padding:12px 14px;background:var(--nhan-nhat);color:var(--nhan-dam);margin:0 0 16px}
+.thong-bao.canh-bao{background:var(--vang-nen);color:var(--vang)}
+.trong{color:var(--phu);text-align:center;padding:28px 8px}
+
+dialog{border:1px solid var(--vien);border-radius:16px;background:var(--the);color:var(--chu);padding:0;width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(10,14,20,.55)}
+dialog .noi-dung{padding:20px;overflow:auto;max-height:calc(100vh - 32px)}
+pre.mau{background:var(--nen);border:1px solid var(--vien);border-radius:10px;padding:12px;font:.8rem/1.5 ui-monospace,Consolas,monospace;overflow:auto;white-space:pre}
+details{margin:8px 0}
+summary{cursor:pointer;font-weight:600;color:var(--nhan-dam)}
+ul.loi{margin:6px 0 0;padding-left:20px;color:var(--sai);font-size:.85rem}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--chu);color:var(--nen);padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:calc(100vw - 32px);text-align:center}
+#toast.hien{opacity:1;transform:translateX(-50%)}
+/* Công thức (KaTeX) và hình trong câu hỏi */
+.toan.khoi{display:block;margin:.4em 0;overflow-x:auto;overflow-y:hidden}
+.toan .katex{font-size:1.05em}
+.hinh-cau{display:block;max-width:100%;max-height:320px;height:auto;margin:0 0 14px;border-radius:10px;border:1px solid var(--vien);background:#fff}
+.hinh-nho{max-height:90px;margin:6px 0 0}
+.hinh-giai{max-height:none;margin:10px 0 0}
+.xem-hinh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
+.xem-hinh img{max-height:80px;max-width:160px;border-radius:8px;border:1px solid var(--vien);background:#fff}
+
+/* Mục tiêu hằng ngày */
+.muc-tieu__dong{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+.muc-tieu__dong b{font-size:1.6rem;letter-spacing:-.02em;line-height:1.2}
+.tuan{display:flex;gap:6px;margin-top:12px}
+.tuan span{flex:1;text-align:center;font-size:.75rem;color:var(--phu)}
+.tuan i{display:block;width:26px;height:26px;margin:0 auto 4px;border-radius:50%;border:2px solid var(--vien)}
+.tuan i.mot{border-color:var(--nhan)}
+.tuan i.dat{background:var(--nhan);border-color:var(--nhan)}
+.tuan .nay{font-weight:700;color:var(--nhan-dam)}
+.bieu-do .cot.chua{opacity:.4}
+.nhan-ngay{display:flex;gap:6px;color:var(--phu);font-size:.7rem;text-align:center;margin-top:4px}
+.nhan-ngay span{flex:1;min-width:8px}
+.hop-ct{font-variant-numeric:tabular-nums}
+.chan-trang button{background:none;border:0;padding:0;color:var(--nhan-dam);text-decoration:underline;cursor:pointer;font-size:inherit}
+.chan-trang .cach{margin:0 8px;color:var(--vien)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="dau-trang">
+  <div class="dau-trang__trong">
+    <div class="thuong-hieu"><b id="th-nhan">CLC</b> <span id="th-ten">Luyện Thi CLC</span></div>
+    <div class="bo-de" id="bode" role="group" aria-label="Chọn mục luyện thi"></div>
+    <nav class="menu" id="menu" aria-label="Chức năng"></nav>
+  </div>
+</header>
+<main id="app"></main>
+<footer class="chan-trang">
+  <div id="chan-nut"></div>
+  Copyright of C.T.Dzung © <span id="nam">2026</span>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   Tiện ích chung
+   ============================================================ */
+// Hai mục luyện thi tách riêng: mỗi mục có ngân hàng câu hỏi, lịch sử, thống kê và bài thi dở dang riêng.
+const BO_DE = {
+  clc: { tienTo: 'clc.', nhan: 'CLC', ten: 'Luyện Thi CLC', tieuDe: 'Luyện thi vào lớp Chất Lượng Cao',
+         moTa: 'Làm trắc nghiệm theo môn, thi thử có tính giờ và theo dõi tiến bộ qua từng lần làm bài.', soCau: 20, phut: 30,
+         diemCau: 0, thang: 10 },   // diemCau 0 = chấm theo thang 10
+  timo: { tienTo: 'timo.', nhan: 'TIMO', ten: 'Luyện Thi TIMO', tieuDe: 'Luyện thi Toán TIMO',
+          moTa: 'Rèn tư duy toán theo từng dạng: số học, hình học, tổ hợp & logic, quy luật. Đề thi thử tối đa 25 câu, mỗi câu 4 điểm (tối đa 100 điểm), làm trong 120 phút.',
+          soCau: 25, toiDaCau: 25, phut: 120, diemCau: 4, thang: 100, monMacDinh: 'Toán' }
+};
+let boDe = 'clc';
+try { if (localStorage.getItem('luyenthi.boDe') === 'timo') boDe = 'timo'; } catch (e) { /* dùng mặc định */ }
+const tienTo = () => BO_DE[boDe].tienTo;
+const KHOA = {                 // khóa lưu trữ theo mục đang chọn (mục CLC giữ nguyên khóa cũ nên không mất dữ liệu)
+  get cauHoi() { return tienTo() + 'cauHoi.v1'; },     // câu hỏi người dùng nhập
+  get lichSu() { return tienTo() + 'lichSu.v1'; },     // các lượt luyện tập / thi thử
+  get thongKe() { return tienTo() + 'thongKe.v1'; },   // {idCau: {d, s, cuoi}}
+  get cai() { return tienTo() + 'cai.v1'; },           // {anMau, mucTieu}
+  get ngay() { return tienTo() + 'ngay.v1'; },         // {"YYYY-MM-DD": {c: số câu đã làm, d: số câu đúng, m: mục tiêu ngày đó}}
+  get dangThi() { return tienTo() + 'dangThi.v1'; }    // bài thi đang làm dở
+};
+const CHU_CAI = 'ABCDE';
+
+/* Kho lưu trữ: đọc/ghi đồng bộ như localStorage nhưng dữ liệu nằm trong bộ nhớ và được ghi bền vào IndexedDB, vì localStorage chỉ chứa
+   khoảng 5 triệu ký tự — không đủ cho các bộ đề dạng ảnh. Dữ liệu cũ trong localStorage được chuyển sang IndexedDB ở lần mở đầu tiên.
+   Không dùng được IndexedDB thì giữ cách cũ (localStorage). `khoSan` xong thì mới được đọc/ghi (xem lệnh khởi động ở cuối file). */
+const KHO_KHOA = /^(clc|timo)\.|^luyenthi\.saoLuu$/;        // khoá của app (luyenthi.boDe vẫn ở localStorage vì đọc ngay lúc khởi động)
+const lsDung = (() => { try { const k = '__clc'; localStorage.setItem(k, k); localStorage.removeItem(k); return true; } catch (e) { return false; } })();
+let idb = null;                // { bang: Map khoá→chuỗi, ghi, xoa } sau khi mở xong IndexedDB
+let kho = {
+  getItem: k => (idb ? (idb.bang.has(k) ? idb.bang.get(k) : null) : localStorage.getItem(k)),
+  setItem(k, v) { v = String(v); if (idb) { idb.bang.set(k, v); idb.ghi(k, v); } else localStorage.setItem(k, v); },
+  removeItem(k) { if (idb) { idb.bang.delete(k); idb.xoa(k); } else localStorage.removeItem(k); },
+  key: i => (idb ? ([...idb.bang.keys()][i] ?? null) : localStorage.key(i)),
+  get length() { return idb ? idb.bang.size : localStorage.length; }
+};
+const khoSan = (async () => {
+  const hong = () => { if (!lsDung) kho = null; };
+  if (typeof indexedDB === 'undefined') return hong();
+  const chay = (db, kieu, f) => new Promise((ok, loi) => { const tx = db.transaction('kv', kieu); f(tx.objectStore('kv')); tx.oncomplete = ok; tx.onerror = tx.onabort = () => loi(tx.error); });
+  try {
+    const db = await new Promise((ok, loi) => { const rq = indexedDB.open('luyenthi', 1); rq.onupgradeneeded = () => rq.result.createObjectStore('kv'); rq.onsuccess = () => ok(rq.result); rq.onerror = rq.onblocked = () => loi(rq.error); });
+    const bang = new Map();
+    await chay(db, 'readonly', st => { const rq = st.openCursor(); rq.onsuccess = () => { const c = rq.result; if (c) { bang.set(c.key, c.value); c.continue(); } }; });
+    const cu = [];
+    if (lsDung) for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (KHO_KHOA.test(k) && !bang.has(k)) cu.push(k); }
+    if (cu.length) {                                       // chuyển dữ liệu cũ; chỉ xoá bản cũ sau khi IndexedDB đã ghi xong
+      await chay(db, 'readwrite', st => cu.forEach(k => { const v = localStorage.getItem(k); bang.set(k, v); st.put(v, k); }));
+      cu.forEach(k => { try { localStorage.removeItem(k); } catch (e) { /* bỏ qua */ } });
+    }
+    const loiGhi = () => thongBao('Không lưu được dữ liệu vào trình duyệt (bộ nhớ đầy hoặc bị chặn).');
+    const ghiBen = f => { try { const tx = db.transaction('kv', 'readwrite'); f(tx.objectStore('kv')); tx.onabort = loiGhi; } catch (e) { loiGhi(); } };
+    const kenh = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('luyenthi-kho') : null;     // nhiều tab cùng mở: giữ bản trong bộ nhớ khớp nhau
+    if (kenh) kenh.onmessage = e => { const m = e.data; if (m && typeof m.k === 'string') { if (m.v == null) bang.delete(m.k); else bang.set(m.k, m.v); } };
+    const bao = (k, v) => { try { kenh && kenh.postMessage({ k, v }); } catch (e) { /* bỏ qua */ } };
+    idb = { bang, ghi: (k, v) => { ghiBen(st => st.put(v, k)); bao(k, v); }, xoa: k => { ghiBen(st => st.delete(k)); bao(k, null); } };
+    try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) { /* xin giữ dữ liệu lâu dài, không bắt buộc */ }
+  } catch (e) { idb = null; hong(); }
+})();
+const boNho = {};
+function doc(k, macDinh) {
+  try { const v = kho ? kho.getItem(k) : boNho[k]; return v ? JSON.parse(v) : macDinh; }
+  catch (e) { return macDinh; }
+}
+function ghi(k, v) {          // trả về false nếu trình duyệt không cho lưu (đầy bộ nhớ hoặc bị chặn)
+  const s = JSON.stringify(v);
+  try { if (kho) kho.setItem(k, s); else boNho[k] = s; return true; }
+  catch (e) { boNho[k] = s; thongBao('Không lưu được dữ liệu vào trình duyệt (bộ nhớ đầy hoặc bị chặn).'); return false; }
+}
+
+// Tạo phần tử DOM; chuỗi con luôn là text nên dữ liệu nhập vào không thể chèn HTML.
+function h(tag, thuocTinh, ...con) {
+  const el = document.createElement(tag);
+  if (thuocTinh) for (const [k, v] of Object.entries(thuocTinh)) {
+    if (v == null || v === false || k === 'value') continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v === true) el.setAttribute(k, '');
+    else el.setAttribute(k, v);
+  }
+  for (const c of con.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  if (thuocTinh && thuocTinh.value != null) el.value = thuocTinh.value;
+  return el;
+}
+
+let toastId = null;
+function thongBao(noiDung) {
+  const el = document.getElementById('toast');
+  el.textContent = noiDung; el.classList.add('hien');
+  clearTimeout(toastId); toastId = setTimeout(() => el.classList.remove('hien'), 3600);
+}
+
+const boDau = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().trim().replace(/\s+/g, ' ');
+const xao = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const mmss = giay => { const m = Math.floor(giay / 60), s = giay % 60; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); };
+const soVN = n => Number(n).toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+const ngayGio = iso => new Date(iso).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+const taoId = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+function taiXuong(ten, blob) {
+  const a = h('a', { href: URL.createObjectURL(blob), download: ten });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+const THU_VIEN = {
+  xlsx: { url: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', bien: 'XLSX' },
+  mammoth: { url: 'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js', bien: 'mammoth' },
+  pdfjs: { url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', bien: 'pdfjsLib',
+           worker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js' },
+  katex: { url: 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js', bien: 'katex',
+           css: 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css' }
+};
+const dangTai = {};        // mỗi thư viện chỉ tải một lần dù được gọi nhiều lần cùng lúc
+function taiThuVien(ten) {
+  const t = THU_VIEN[ten];
+  if (window[t.bien]) return Promise.resolve(window[t.bien]);
+  return dangTai[ten] || (dangTai[ten] = new Promise((xong, loi) => {
+    const s = document.createElement('script');
+    s.src = t.url;
+    s.onload = () => {
+      if (t.worker) window[t.bien].GlobalWorkerOptions.workerSrc = t.worker;
+      if (t.css) document.head.append(h('link', { rel: 'stylesheet', href: t.css }));
+      xong(window[t.bien]);
+    };
+    s.onerror = () => { s.remove(); delete dangTai[ten]; loi(new Error('Không tải được thư viện (' + ten + '). Hãy kiểm tra kết nối mạng.')); };
+    document.head.append(s);
+  }));
+}
+
+/* ---------- Công thức toán (KaTeX) ----------
+   Văn bản câu hỏi có thể chứa $x^2$, $$\frac{a}{b}$$, \(...\) hoặc \[...\]. vb() trả về text thường
+   và các <span class="toan"> mang mã TeX trong thuộc tính; KaTeX chỉ được nạp (từ CDN) khi trang có công thức,
+   và KaTeX tự dựng DOM nên không có chỗ nào dùng innerHTML. Chưa nạp được (offline) thì hiện nguyên mã gốc. */
+const RE_TOAN = /\$\$([\s\S]+?)\$\$|\$(?![\s$])((?:[^$\n\\]|\\[\s\S])+?)\$(?!\d)|\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g;
+function vb(s) {
+  s = String(s ?? '');
+  if (!/[$\\]/.test(s)) return s;
+  const kq = []; let cuoi = 0, m;
+  RE_TOAN.lastIndex = 0;
+  while ((m = RE_TOAN.exec(s))) {
+    const tex = m[1] ?? m[2] ?? m[3] ?? m[4];
+    if (m[2] != null && /\s$/.test(tex)) continue;       // "$5 và $ 10": chữ chạy qua dấu $ không phải công thức
+    if (m.index > cuoi) kq.push(s.slice(cuoi, m.index));
+    const khoi = m[1] != null || m[4] != null;
+    kq.push(h('span', { class: 'toan' + (khoi ? ' khoi' : ''), 'data-tex': tex.trim(), 'data-khoi': khoi ? '1' : null }, m[0]));
+    cuoi = m.index + m[0].length;
+  }
+  if (!kq.length) return s;
+  if (cuoi < s.length) kq.push(s.slice(cuoi));
+  veToan();
+  return kq;
+}
+let toanHen = 0;
+function veToan() {
+  clearTimeout(toanHen);
+  toanHen = setTimeout(async () => {
+    const ds = [...document.querySelectorAll('.toan:not([data-xong])')];
+    if (!ds.length) return;
+    let K; try { K = await taiThuVien('katex'); } catch (e) { return; }
+    document.querySelectorAll('.toan:not([data-xong])').forEach(el => {
+      try { K.render(el.dataset.tex, el, { displayMode: !!el.dataset.khoi, throwOnError: false }); el.dataset.xong = '1'; } catch (e) { /* để nguyên mã gốc */ }
+    });
+  }, 0);
+}
+
+/* ---------- Hình trong câu hỏi ----------
+   q.hinh là data URL ảnh (đã nén khi thêm) hoặc đường dẫn http(s). Thuộc tính chỉ được đặt vào <img>,
+   và chỉ nhận đúng các dạng này (không nhận SVG) nên dữ liệu nhập vào không thể chèn mã. */
+const RE_HINH = /^(?:data:image\/(?:png|jpeg|gif|webp);base64,[A-Za-z0-9+\/=]+|https?:\/\/[^\s"'<>]+)$/i;
+const hinhHopLe = s => typeof s === 'string' && s.length < 1500000 && RE_HINH.test(s);
+// Bài thi dở dang lưu cả danh sách câu vào localStorage nên không chép ảnh vào đó: tra lại theo id khi hiển thị
+const hinhCua = q => q.hinh || cauNguoiDung().find(x => x.id === q.id)?.hinh;
+// Bấm vào hình để xem cỡ gốc (hình lấy cả đề từ PDF có chữ nhỏ, trên điện thoại cần cuộn/phóng to)
+function phongToHinh(src) {
+  const hop = moHop(h('div', { class: 'hang giua', style: 'margin-bottom:10px' }, h('span', { class: 'meta', style: 'margin:0' }, 'Hình cỡ gốc (cuộn để xem hết)'),
+    h('button', { class: 'btn vien nho', onclick: () => hop.close() }, 'Đóng')),
+    h('div', { style: 'overflow:auto;max-height:calc(100vh - 120px);background:#fff;border-radius:10px' }, h('img', { src, alt: 'Hình cỡ gốc', style: 'display:block;max-width:none' })));
+  hop.style.width = 'min(960px,calc(100vw - 24px))';
+}
+const hinhQ = (q, nho) => {
+  const s = hinhCua(q);
+  return hinhHopLe(s) ? h('img', { class: 'hinh-cau' + (nho ? ' hinh-nho' : ''), src: s, alt: 'Hình minh hoạ của câu hỏi (bấm để xem cỡ gốc)', title: 'Bấm để xem cỡ gốc',
+    loading: 'lazy', referrerpolicy: 'no-referrer', style: 'cursor:zoom-in', onclick: () => phongToHinh(s) }) : null;
+};
+// Lời giải dạng ảnh (q.giaiHinh): dùng cho lời giải có công thức/hình mà chữ không thể hiện được; chỉ hiện sau khi trả lời
+const giaiHinhCua = q => q.giaiHinh || cauNguoiDung().find(x => x.id === q.id)?.giaiHinh;
+const giaiHinhQ = q => {
+  const s = giaiHinhCua(q);
+  return hinhHopLe(s) ? h('img', { class: 'hinh-cau hinh-giai', src: s, alt: 'Lời giải chi tiết (bấm để xem cỡ gốc)', title: 'Bấm để xem cỡ gốc',
+    loading: 'lazy', referrerpolicy: 'no-referrer', style: 'cursor:zoom-in', onclick: () => phongToHinh(s) }) : null;
+};
+// Đọc ảnh từ file/clipboard, thu về tối đa 900 px mỗi cạnh để không làm đầy localStorage (khoảng 5 MB)
+async function docAnh(file) {
+  if (!/^image\/(png|jpeg|gif|webp)$/.test(file.type)) throw new Error('Chỉ nhận ảnh PNG, JPG, GIF hoặc WebP.');
+  if (file.size > 15e6) throw new Error('Ảnh quá lớn (tối đa 15 MB).');
+  const bm = await createImageBitmap(file);
+  const tl = Math.min(1, 900 / Math.max(bm.width, bm.height));
+  const cv = h('canvas', { width: Math.max(1, Math.round(bm.width * tl)), height: Math.max(1, Math.round(bm.height * tl)) });
+  const g = cv.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(bm, 0, 0, cv.width, cv.height);
+  let url = cv.toDataURL('image/png');
+  if (url.length > 250000) url = cv.toDataURL('image/jpeg', 0.85);      // hình vẽ đơn giản thì PNG nhỏ; ảnh chụp thì JPEG
+  return url;
+}
+
+/* ============================================================
+   Ngân hàng câu hỏi
+   ============================================================ */
+const taoMau = tienToId => {
+  let n = 0;
+  return (mon, chuDe, nd, dapAn, dung, giaiThich) =>
+    ({ id: tienToId + (++n), mon, chuDe, nd, dapAn, dung, giaiThich, nguon: 'Câu mẫu', mau: true });
+};
+const mau = taoMau('mau-');          // id mau-N giữ nguyên để không mất thống kê cũ của mục CLC
+const mauT0 = taoMau('timo-mau-');
+// TIMO chỉ có một môn là Toán: tham số đầu là nhóm dạng bài (thành chủ đề), tham số thứ hai chỉ để ghi chú dạng cụ thể
+const mauT = (nhom, _chiTiet, ...con) => mauT0('Toán', nhom, ...con);
+const CAU_MAU = [
+  // Toán
+  mau('Toán', 'Phân số', '3/4 + 1/6 = ?', ['4/10', '11/12', '5/12', '1/2'], 1, 'Quy đồng mẫu số 12: 9/12 + 2/12 = 11/12.'),
+  mau('Toán', 'Hình học', 'Một hình chữ nhật có chiều dài 12 cm, chiều rộng 8 cm. Chu vi hình chữ nhật là:', ['20 cm', '40 cm', '96 cm', '48 cm'], 1, 'Chu vi = (12 + 8) × 2 = 40 cm.'),
+  mau('Toán', 'Hình học', 'Diện tích của hình chữ nhật có chiều dài 12 cm và chiều rộng 8 cm là:', ['40 cm²', '20 cm²', '96 cm²', '192 cm²'], 2, 'Diện tích = 12 × 8 = 96 cm².'),
+  mau('Toán', 'Tỉ số phần trăm', '25% của 240 là:', ['40', '60', '80', '120'], 1, '240 × 25 : 100 = 60.'),
+  mau('Toán', 'Tìm x', 'Tìm x, biết: x × 7 = 56 + 14', ['x = 8', 'x = 10', 'x = 12', 'x = 70'], 1, '56 + 14 = 70, suy ra x = 70 : 7 = 10.'),
+  mau('Toán', 'Chuyển động', 'Một ô tô đi được 180 km trong 3 giờ. Vận tốc trung bình của ô tô là:', ['50 km/giờ', '54 km/giờ', '60 km/giờ', '90 km/giờ'], 2, 'Vận tốc = quãng đường : thời gian = 180 : 3 = 60 km/giờ.'),
+  mau('Toán', 'Trung bình cộng', 'Trung bình cộng của bốn số 12, 18, 24 và 30 là:', ['18', '21', '24', '84'], 1, '(12 + 18 + 24 + 30) : 4 = 84 : 4 = 21.'),
+  mau('Toán', 'Dấu hiệu chia hết', 'Số nào dưới đây chia hết cho cả 2 và 5?', ['125', '130', '142', '215'], 1, 'Số chia hết cho cả 2 và 5 phải có chữ số tận cùng là 0.'),
+  mau('Toán', 'Hình học', 'Một hình tam giác có đáy 10 cm, chiều cao 6 cm. Diện tích hình tam giác là:', ['16 cm²', '30 cm²', '60 cm²', '32 cm²'], 1, 'Diện tích = đáy × chiều cao : 2 = 10 × 6 : 2 = 30 cm².'),
+  mau('Toán', 'Số thập phân', '0,5 × 0,4 = ?', ['0,02', '0,2', '2', '0,9'], 1, '5 × 4 = 20; hai thừa số có tổng cộng 2 chữ số ở phần thập phân nên kết quả là 0,20 = 0,2.'),
+  // Tiếng Việt
+  mau('Tiếng Việt', 'Từ trái nghĩa', 'Từ nào trái nghĩa với từ "siêng năng"?', ['chăm chỉ', 'cần cù', 'lười biếng', 'chịu khó'], 2, '"Siêng năng" trái nghĩa với "lười biếng".'),
+  mau('Tiếng Việt', 'Từ loại', 'Từ nào dưới đây là danh từ?', ['chạy', 'xinh đẹp', 'học sinh', 'nhanh'], 2, '"Học sinh" chỉ người nên là danh từ; "chạy" là động từ; "xinh đẹp", "nhanh" là tính từ.'),
+  mau('Tiếng Việt', 'Câu', 'Câu nào sau đây là câu ghép?', ['Bạn Lan đang đọc sách.', 'Trời mưa to, đường phố ngập nước.', 'Em rất yêu mùa thu.', 'Chim hót líu lo trên cành.'], 1, 'Câu "Trời mưa to, đường phố ngập nước." có hai cụm chủ ngữ – vị ngữ (Trời / mưa to; đường phố / ngập nước) không bao nhau nên là câu ghép.'),
+  mau('Tiếng Việt', 'Từ đồng nghĩa', 'Từ nào đồng nghĩa với từ "chăm chỉ"?', ['lười nhác', 'cần cù', 'vội vàng', 'ngơ ngác'], 1, '"Cần cù" có nghĩa gần với "chăm chỉ".'),
+  mau('Tiếng Việt', 'Biện pháp tu từ', 'Trong câu "Mặt trời xuống biển như hòn lửa", tác giả dùng biện pháp nghệ thuật nào?', ['So sánh', 'Nhân hóa', 'Điệp ngữ', 'Hoán dụ'], 0, 'Có từ so sánh "như" nối mặt trời với hòn lửa nên là biện pháp so sánh.'),
+  mau('Tiếng Việt', 'Từ láy', 'Từ nào dưới đây là từ láy?', ['bàn ghế', 'lung linh', 'sách vở', 'xe đạp'], 1, '"Lung linh" có các tiếng láy âm đầu nên là từ láy; các từ còn lại là từ ghép.'),
+  mau('Tiếng Việt', 'Thành ngữ, tục ngữ', 'Câu "Ăn quả nhớ kẻ trồng cây" khuyên chúng ta điều gì?', ['Phải biết ơn người đã giúp mình', 'Phải chăm chỉ trồng cây', 'Không nên ăn quá nhiều hoa quả', 'Phải biết tiết kiệm'], 0, 'Câu tục ngữ nhắc nhở lòng biết ơn đối với người đã tạo ra thành quả cho mình hưởng.'),
+  mau('Tiếng Việt', 'Chính tả', 'Từ nào viết đúng chính tả?', ['chăm chỉ', 'trăm chỉ', 'chăm trỉ', 'trăm trỉ'], 0, 'Viết đúng là "chăm chỉ".'),
+  // Tiếng Anh
+  mau('Tiếng Anh', 'Ngữ pháp', 'She ___ to school every day.', ['go', 'goes', 'going', 'gone'], 1, 'Chủ ngữ "She" là ngôi thứ ba số ít, thì hiện tại đơn nên động từ thêm -es: goes.'),
+  mau('Tiếng Anh', 'Từ vựng', 'What is the opposite of "big"?', ['tall', 'small', 'long', 'old'], 1, '"Big" (to) trái nghĩa với "small" (nhỏ).'),
+  mau('Tiếng Anh', 'Ngữ pháp', 'I ___ playing football now.', ['am', 'is', 'are', 'do'], 0, 'Thì hiện tại tiếp diễn với chủ ngữ "I" dùng "am + V-ing".'),
+  mau('Tiếng Anh', 'Ngữ pháp', 'How ___ apples are there in the basket?', ['much', 'many', 'long', 'old'], 1, '"Apples" là danh từ đếm được số nhiều nên dùng "How many".'),
+  mau('Tiếng Anh', 'Từ vựng', 'What is the plural form of "child"?', ['childs', 'childes', 'children', 'childrens'], 2, '"Child" là danh từ bất quy tắc, số nhiều là "children".'),
+  mau('Tiếng Anh', 'Giao tiếp', 'Choose the correct answer to the question: "What time is it?"', ['It\'s Monday.', 'It\'s seven o\'clock.', 'It\'s sunny.', 'It\'s my book.'], 1, 'Hỏi giờ thì trả lời bằng giờ: "It\'s seven o\'clock."'),
+  mau('Tiếng Anh', 'Ngữ pháp', 'There ___ two books on the table.', ['is', 'are', 'am', 'be'], 1, '"Two books" là số nhiều nên dùng "There are".'),
+  mau('Tiếng Anh', 'Ngữ pháp', 'Yesterday, we ___ to the zoo.', ['go', 'goes', 'went', 'going'], 2, '"Yesterday" báo hiệu thì quá khứ đơn; quá khứ của "go" là "went".'),
+  // Tư duy logic
+  mau('Tư duy logic', 'Quy luật dãy số', 'Tìm số tiếp theo của dãy: 2, 4, 8, 16, ...', ['24', '30', '32', '36'], 2, 'Mỗi số bằng số liền trước nhân 2: 16 × 2 = 32.'),
+  mau('Tư duy logic', 'Quy luật dãy số', 'Tìm số tiếp theo của dãy: 1, 4, 9, 16, 25, ...', ['30', '34', '36', '49'], 2, 'Đây là dãy các số chính phương: 1², 2², 3², 4², 5², nên số tiếp theo là 6² = 36.'),
+  mau('Tư duy logic', 'Suy luận', 'Lan cao hơn Mai, Mai cao hơn Hoa. Bạn nào thấp nhất?', ['Lan', 'Mai', 'Hoa', 'Không xác định được'], 2, 'Lan > Mai > Hoa nên Hoa thấp nhất.'),
+  mau('Tư duy logic', 'Gà và thỏ', 'Có gà và thỏ nhốt chung, tất cả có 10 đầu và 28 chân. Hỏi có bao nhiêu con thỏ?', ['2', '4', '6', '8'], 1, 'Giả sử cả 10 con đều là gà thì có 20 chân, thừa 28 − 20 = 8 chân. Mỗi con thỏ hơn gà 2 chân nên có 8 : 2 = 4 con thỏ.')
+];
+
+// Câu mẫu mục TIMO: tự soạn theo dạng bài toán quốc tế cho học sinh tiểu học, KHÔNG phải đề TIMO thật.
+const CAU_TIMO = [
+  // Số học
+  mauT('Số học', 'Tính tổng', 'Tính tổng 1 + 2 + 3 + ... + 20.', ['190', '200', '210', '220'], 2, 'Tổng các số từ 1 đến n là n × (n + 1) : 2 = 20 × 21 : 2 = 210.'),
+  mauT('Số học', 'Cấu tạo số', 'Số nhỏ nhất có ba chữ số khác nhau là:', ['100', '101', '102', '123'], 2, '100 và 101 có chữ số lặp lại. Số nhỏ nhất có ba chữ số khác nhau là 102.'),
+  mauT('Số học', 'Chữ số tận cùng', 'Chữ số tận cùng của 7 × 7 × 7 × ... × 7 (2026 thừa số 7) là:', ['1', '3', '7', '9'], 3, 'Chữ số tận cùng của các lũy thừa của 7 lặp lại theo chu kỳ 7, 9, 3, 1 (4 số). Vì 2026 chia 4 dư 2 nên chữ số tận cùng là chữ số thứ hai của chu kỳ: 9.'),
+  mauT('Số học', 'Đếm số', 'Có bao nhiêu số chẵn có hai chữ số?', ['40', '44', '45', '50'], 2, 'Các số chẵn có hai chữ số là 10, 12, ..., 98. Số các số là (98 − 10) : 2 + 1 = 45.'),
+  mauT('Số học', 'Bội chung nhỏ nhất', 'Số tự nhiên nhỏ nhất khác 0 chia hết cho cả 4, 6 và 10 là:', ['30', '60', '120', '240'], 1, 'BCNN của 4, 6 và 10: 4 = 2², 6 = 2 × 3, 10 = 2 × 5 nên BCNN = 2² × 3 × 5 = 60.'),
+  mauT('Số học', 'Chữ số tận cùng', 'Tích 1 × 2 × 3 × 4 × 5 × 6 có tận cùng bao nhiêu chữ số 0?', ['0', '1', '2', '3'], 1, 'Tích bằng 720, tận cùng có đúng một chữ số 0 (do 2 × 5 = 10 chỉ xuất hiện một lần).'),
+  // Hình học
+  mauT('Hình học', 'Chu vi, diện tích', 'Một hình vuông có chu vi 36 cm. Diện tích hình vuông là:', ['36 cm²', '72 cm²', '81 cm²', '144 cm²'], 2, 'Cạnh = 36 : 4 = 9 cm; diện tích = 9 × 9 = 81 cm².'),
+  mauT('Hình học', 'Góc', 'Một tam giác có hai góc là 50° và 60°. Góc còn lại là:', ['60°', '70°', '80°', '110°'], 1, 'Tổng ba góc của tam giác là 180°: 180° − 50° − 60° = 70°.'),
+  mauT('Hình học', 'Thể tích', 'Thể tích của hình lập phương có cạnh 3 cm là:', ['9 cm³', '18 cm³', '27 cm³', '54 cm³'], 2, 'Thể tích = 3 × 3 × 3 = 27 cm³.'),
+  mauT('Hình học', 'Chu vi, diện tích', 'Một hình chữ nhật có chu vi 30 cm, chiều dài gấp đôi chiều rộng. Diện tích hình chữ nhật là:', ['50 cm²', '56 cm²', '75 cm²', '100 cm²'], 0, 'Nửa chu vi là 15 cm = 3 phần (1 phần chiều rộng, 2 phần chiều dài) nên chiều rộng 5 cm, chiều dài 10 cm; diện tích 5 × 10 = 50 cm².'),
+  mauT('Hình học', 'Góc', 'Tổng bốn góc trong của một tứ giác bằng:', ['180°', '270°', '360°', '540°'], 2, 'Chia tứ giác thành 2 tam giác bằng một đường chéo: 2 × 180° = 360°.'),
+  mauT('Hình học', 'Diện tích', 'Một hình tam giác có đáy 14 cm và diện tích 56 cm². Chiều cao của tam giác là:', ['4 cm', '6 cm', '8 cm', '16 cm'], 2, 'Chiều cao = diện tích × 2 : đáy = 56 × 2 : 14 = 8 cm.'),
+  mauT('Số học', 'Dấu hiệu chia hết', 'Chữ số x để số 12x chia hết cho 9 là:', ['3', '6', '7', '9'], 1, 'Số chia hết cho 9 khi tổng các chữ số chia hết cho 9: 1 + 2 + x = 3 + x nên x = 6 (3 + 6 = 9).'),
+  mauT('Tổ hợp & logic', 'Hoán vị', 'Có 4 bạn xếp thành một hàng ngang. Có bao nhiêu cách xếp khác nhau?', ['12', '16', '24', '48'], 2, 'Vị trí đầu có 4 cách chọn, tiếp theo 3, rồi 2, rồi 1: 4 × 3 × 2 × 1 = 24.'),
+  mauT('Đại số & quy luật', 'Dãy số cách đều', 'Tổng của năm số lẻ liên tiếp là 45. Số lớn nhất trong năm số đó là:', ['11', '13', '15', '17'], 1, 'Số ở giữa là 45 : 5 = 9, năm số lẻ liên tiếp là 5, 7, 9, 11, 13 nên số lớn nhất là 13.'),
+  // Tổ hợp & logic
+  mauT('Tổ hợp & logic', 'Đếm cách', 'Có 5 bạn, mỗi hai bạn bắt tay nhau đúng một lần. Tất cả có bao nhiêu cái bắt tay?', ['5', '10', '15', '20'], 1, 'Mỗi bạn bắt tay 4 bạn còn lại: 5 × 4 = 20, nhưng mỗi cái bắt tay được tính hai lần nên có 20 : 2 = 10.'),
+  mauT('Tổ hợp & logic', 'Quy tắc nhân', 'Một bạn có 3 chiếc áo và 4 chiếc quần khác nhau. Bạn có thể mặc được bao nhiêu bộ quần áo khác nhau?', ['7', '12', '16', '24'], 1, 'Mỗi áo ghép được với 4 quần: 3 × 4 = 12 bộ.'),
+  mauT('Tổ hợp & logic', 'Lập số', 'Từ các chữ số 1, 2, 3 lập được bao nhiêu số có ba chữ số khác nhau?', ['3', '6', '9', '27'], 1, 'Chữ số hàng trăm có 3 cách chọn, hàng chục 2 cách, hàng đơn vị 1 cách: 3 × 2 × 1 = 6.'),
+  mauT('Tổ hợp & logic', 'Nguyên lý Dirichlet', 'Trong hộp có 4 bi đỏ, 5 bi xanh và 6 bi vàng. Phải lấy ra ít nhất bao nhiêu viên bi (không nhìn) để chắc chắn có ít nhất một bi xanh?', ['6', '9', '10', '11'], 3, 'Trường hợp xấu nhất là lấy hết 4 + 6 = 10 bi đỏ và vàng. Lấy thêm 1 viên nữa chắc chắn là bi xanh nên cần 11 viên.'),
+  mauT('Tổ hợp & logic', 'Nguyên lý Dirichlet', 'Trong lớp có 13 bạn. Chắc chắn có ít nhất bao nhiêu bạn sinh cùng một tháng?', ['1', '2', '3', '13'], 1, 'Có 12 tháng mà 13 bạn nên theo nguyên lý ngăn kéo, ít nhất 2 bạn sinh cùng một tháng.'),
+  // Đại số & quy luật
+  mauT('Đại số & quy luật', 'Quy luật dãy số', 'Tìm số tiếp theo của dãy: 3, 6, 11, 18, 27, ...', ['36', '37', '38', '40'], 2, 'Hiệu giữa hai số liền nhau lần lượt là 3, 5, 7, 9 nên hiệu tiếp theo là 11: 27 + 11 = 38.'),
+  mauT('Đại số & quy luật', 'Quy luật dãy số', 'Tìm số tiếp theo của dãy: 1, 1, 2, 3, 5, 8, ...', ['11', '12', '13', '14'], 2, 'Mỗi số bằng tổng hai số liền trước: 5 + 8 = 13.'),
+  mauT('Đại số & quy luật', 'Tính tổng', 'Tính tổng 1 + 3 + 5 + ... + 19.', ['90', '99', '100', '110'], 2, 'Có 10 số lẻ liên tiếp từ 1 đến 19; tổng của n số lẻ đầu tiên bằng n × n = 10 × 10 = 100.'),
+  mauT('Đại số & quy luật', 'Tìm số', 'Nhân một số với 3 rồi cộng 5 thì được 29. Số đó là:', ['6', '7', '8', '9'], 2, 'Làm ngược: 29 − 5 = 24, rồi 24 : 3 = 8.'),
+  mauT('Đại số & quy luật', 'Tổng - hiệu', 'Tổng của hai số là 50, hiệu của hai số là 10. Số lớn là:', ['20', '30', '35', '40'], 1, 'Số lớn = (tổng + hiệu) : 2 = (50 + 10) : 2 = 30.'),
+  mauT('Đại số & quy luật', 'Phép toán mới', 'Cho phép toán a ★ b = a × b + a. Giá trị của 3 ★ 4 là:', ['12', '15', '16', '19'], 1, '3 ★ 4 = 3 × 4 + 3 = 12 + 3 = 15.'),
+  mauT('Đại số & quy luật', 'Bài toán tuổi', 'Hiện nay mẹ 30 tuổi, con 6 tuổi. Sau bao nhiêu năm nữa tuổi mẹ gấp 3 lần tuổi con?', ['3 năm', '4 năm', '6 năm', '8 năm'], 2, 'Hiệu tuổi luôn là 24. Khi tuổi mẹ gấp 3 lần tuổi con thì tuổi con là 24 : 2 = 12, tức sau 12 − 6 = 6 năm (mẹ 36 tuổi).'),
+  // Toán thực tế
+  mauT('Toán thực tế', 'Chuyển động', 'Hai xe xuất phát cùng lúc từ A và B cách nhau 180 km, đi ngược chiều để gặp nhau. Vận tốc hai xe là 40 km/giờ và 50 km/giờ. Sau bao lâu hai xe gặp nhau?', ['2 giờ', '3 giờ', '4 giờ', '4,5 giờ'], 0, 'Mỗi giờ hai xe lại gần nhau 40 + 50 = 90 km nên thời gian gặp nhau là 180 : 90 = 2 giờ.'),
+  mauT('Toán thực tế', 'Đổi đơn vị', 'Một bể chứa được 2 m³ nước. Đổi ra lít là:', ['20 lít', '200 lít', '2000 lít', '20 000 lít'], 2, '1 m³ = 1000 lít nên 2 m³ = 2000 lít.'),
+  mauT('Toán thực tế', 'Đổi đơn vị', '3 giờ 45 phút bằng bao nhiêu phút?', ['205 phút', '215 phút', '225 phút', '345 phút'], 2, '3 giờ = 180 phút; 180 + 45 = 225 phút.')
+];
+const cauMau = () => (boDe === 'timo' ? CAU_TIMO : CAU_MAU);
+
+const caiDat = () => doc(KHOA.cai, {});
+// Câu do người dùng nhập có thể kèm hình (data URL, vài trăm KB) nên chỉ phân tích JSON lại khi chuỗi lưu đổi
+const nhoCau = { khoa: '', raw: null, val: [] };
+function cauNguoiDung() {
+  const khoa = KHOA.cauHoi;
+  let raw = null;
+  try { raw = kho ? kho.getItem(khoa) : (boNho[khoa] ?? null); } catch (e) { /* đọc lỗi thì coi như trống */ }
+  if (nhoCau.khoa !== khoa || nhoCau.raw !== raw) { nhoCau.khoa = khoa; nhoCau.raw = raw; nhoCau.val = doc(khoa, []); }
+  return nhoCau.val.slice();
+}
+const tatCaCau = () => (caiDat().anMau ? [] : cauMau()).concat(cauNguoiDung());
+const dsMon = () => [...new Set(tatCaCau().map(q => q.mon))];
+const dsChuDe = mon => [...new Set(tatCaCau().filter(q => !mon || q.mon === mon).map(q => q.chuDe))];
+
+const KHONG_XAO = /(cả\s+[A-E]\b|tất cả|đáp án trên|all of the|none of the|both)/i;
+const KHONG_XAO_NHAN = /\b[A-E]\s+(and|or|và|hoặc)\s+[A-E]\b/;     // lựa chọn nhắc tới chữ cái khác ("A and C are correct", "A và B đúng"): giữ nguyên thứ tự
+// Câu điền đáp án (như phần "Điền đáp án" của TIMO): không có lựa chọn A–D, học sinh gõ kết quả.
+// q.dien là danh sách các cách viết đáp án được chấp nhận; khi đó q.dapAn = [] và q.dung = -1.
+const laDien = q => Array.isArray(q.dien) && q.dien.length > 0;
+function giaTri(s) {          // "1,5" = "1.5" = "3/2"; đơn vị đi kèm ("12 cm") chỉ cần khớp khi cả hai bên đều ghi đơn vị
+  const t = String(s ?? '').toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
+  const m = /^(-?\d+(?:\.\d+)?)(?:\/(\d+))?(.*)$/.exec(t);
+  if (!m || (m[2] && !Number(m[2]))) return { n: null, t, dv: '' };
+  return { n: m[2] ? Number(m[1]) / Number(m[2]) : Number(m[1]), t, dv: m[3] };
+}
+const chuThuan = t => t.replace(/[^\p{L}\p{N}]/gu, '');    // đáp án chữ (viết lại câu, sắp xếp từ): bỏ qua dấu câu và khoảng trắng (đã không phân biệt hoa thường)
+// Phần sau số có chứa thêm số ("giờ45phút", ":45") là đáp án ghép (8 giờ 45 phút), không phải đơn vị ("cm2", "km/h"): không được bỏ qua khi người dùng chỉ gõ số đầu
+const gopSo = dv => /\d/.test(dv) && !/^[\p{L}\/²³.]+\d{0,2}$/u.test(dv);
+function khopDien(q, s) {
+  const a = giaTri(s); if (!a.t) return false;
+  return q.dien.some(d => {
+    const b = giaTri(d);
+    return a.n != null && b.n != null ? Math.abs(a.n - b.n) < 1e-9 && (a.dv === b.dv || (!a.dv && !gopSo(b.dv)) || (!b.dv && !gopSo(a.dv))) : a.n == null && b.n == null ? chuThuan(a.t) === chuThuan(b.t) : a.t === b.t;
+  });
+}
+const dungCau = (q, chon) => chon != null && (laDien(q) ? khopDien(q, chon) : chon === q.dung);
+const chonText = (q, chon) => (laDien(q) ? String(chon) : q.dapAn[chon] === CHU_CAI[chon] ? CHU_CAI[chon] : CHU_CAI[chon] + '. ' + q.dapAn[chon]);
+const dungText = q => (laDien(q) ? q.dien.join('  hoặc  ') : q.dapAn[q.dung] === CHU_CAI[q.dung] ? CHU_CAI[q.dung] : CHU_CAI[q.dung] + '. ' + q.dapAn[q.dung]);
+// Nội dung một nút lựa chọn: nếu lựa chọn chỉ là nhãn (đáp án nằm trong hình) thì ghi "Phương án X" thay vì lặp lại chữ cái
+const noiDungLc = (t, k) => (t === CHU_CAI[k] ? 'Phương án ' + t : vb(t));
+
+function xaoDapAn(q) {
+  if (laDien(q)) return { id: q.id, mon: q.mon, chuDe: q.chuDe, nd: q.nd, giaiThich: q.giaiThich || '', dapAn: [], dung: -1, dien: q.dien };
+  const idx = q.dapAn.map((_, i) => i);
+  // Lựa chọn chỉ là nhãn "A, B, C, D" (đáp án nằm trong hình) thì phải giữ nguyên thứ tự để khớp với hình
+  const laNhan = q.dapAn.every((t, i) => t === CHU_CAI[i]);
+  const thuTu = laNhan || KHONG_XAO.test(q.dapAn.join(' | ')) || KHONG_XAO_NHAN.test(q.dapAn.join(' | ')) ? idx : xao(idx);
+  return { id: q.id, mon: q.mon, chuDe: q.chuDe, nd: q.nd, giaiThich: q.giaiThich || '',
+           dapAn: thuTu.map(i => q.dapAn[i]), dung: thuTu.indexOf(q.dung) };
+}
+
+// Danh sách đáp án điền: mảng hoặc chuỗi "72 | 72 cm" (ngăn cách bằng | hoặc ;)
+const tachDien = v => (Array.isArray(v) ? v : String(v ?? '').split(/\s*[|;]\s*/)).map(x => String(x ?? '').trim()).filter(Boolean);
+function chuanHoaCau(c) {
+  const dapAn = (c.dapAn || []).map(x => String(x ?? '').trim()).filter(Boolean);
+  const dien = dapAn.length < 2 ? tachDien(c.dien) : [];
+  return {
+    id: taoId(),
+    mon: String(c.mon || '').trim(),
+    chuDe: String(c.chuDe || '').trim() || 'Chung',
+    nd: String(c.nd || '').trim(),
+    ...(dien.length ? { dapAn: [], dung: -1, dien } : { dapAn, dung: c.dung }),
+    giaiThich: String(c.giaiThich || '').trim(),
+    nguon: String(c.nguon || '').trim(),
+    ...(hinhHopLe(String(c.hinh || '').trim()) ? { hinh: String(c.hinh).trim() } : {}),
+    ...(hinhHopLe(String(c.giaiHinh || '').trim()) ? { giaiHinh: String(c.giaiHinh).trim() } : {})
+  };
+}
+// Kiểm tra một câu đọc từ file sao lưu (không tin dữ liệu): trả về câu đã chuẩn hóa, giữ nguyên id, hoặc null nếu hỏng
+function hopLeCau(c) {
+  if (!c || typeof c !== 'object' || typeof c.nd !== 'string' || !c.nd.trim()) return null;
+  const s = (v, max) => String(v ?? '').trim().slice(0, max);
+  const goc = { id: typeof c.id === 'string' && /^u[0-9a-z]{3,40}$/.test(c.id) ? c.id : taoId(),
+                mon: s(c.mon, 60) || 'Khác', chuDe: s(c.chuDe, 80) || 'Chung', nd: s(c.nd, 5000),
+                giaiThich: s(c.giaiThich, 5000), nguon: s(c.nguon, 120), ...(hinhHopLe(c.hinh) ? { hinh: c.hinh } : {}), ...(hinhHopLe(c.giaiHinh) ? { giaiHinh: c.giaiHinh } : {}) };
+  const dapAn = Array.isArray(c.dapAn) ? c.dapAn.map(x => s(x, 1000)).filter(Boolean).slice(0, CHU_CAI.length) : [];
+  if (dapAn.length >= 2) return Number.isInteger(c.dung) && c.dung >= 0 && c.dung < dapAn.length ? { ...goc, dapAn, dung: c.dung } : null;
+  const dien = tachDien(c.dien).map(x => x.slice(0, 200)).slice(0, 20);
+  return dien.length ? { ...goc, dapAn: [], dung: -1, dien } : null;
+}
+// Hai câu là một khi cùng môn, cùng nội dung và cùng các lựa chọn/đáp án (nhiều đề có câu cùng chữ như "Có bao nhiêu hình chữ nhật trong hình?" nhưng khác hình và đáp án).
+// Câu thuộc đề của trường thì chủ đề (tên trường + đề) cũng là một phần của khóa: các đề luyện lặp lại câu của nhau nên mỗi đề phải giữ đủ câu.
+const khoaTrung = q => boDau(q.mon) + '|' + (truongDeCua(q) ? boDau(chuDeChuan(q)) : '') + '|' + boDau(q.nd) + '|' + (laDien(q) ? 'd:' + q.dien.map(boDau).join(';') : (q.dapAn || []).map(boDau).join(';'));
+
+/* ============================================================
+   Thống kê & lịch sử
+   ============================================================ */
+const khoaNgay = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const homNay = () => khoaNgay(new Date());
+const congNgay = n => { const d = new Date(); d.setDate(d.getDate() + n); return khoaNgay(d); };
+
+// Lặp lại ngắt quãng (kiểu hộp Leitner) cho "sổ câu sai": mỗi câu có hộp h = 0..5 và ngày ôn kế tiếp den.
+// Làm sai → về hộp 0, ôn lại ngay; làm đúng lúc đã đến hạn → lên một hộp, chờ KHOANG[hộp mới] ngày.
+// Lên tới hộp cuối (cách 30 ngày) thì coi là đã thuộc và rời sổ. Làm đúng khi chưa đến hạn thì giữ nguyên hộp,
+// nếu không luyện đi luyện lại trong cùng một ngày sẽ "leo hộp" mà không thật sự nhớ lâu.
+const KHOANG = [0, 1, 3, 7, 14, 30];
+const HOP_CUOI = KHOANG.length - 1;
+const layHop = o => (Number.isInteger(o.h) ? o.h : o.d + o.s === 0 || o.cuoi === 's' ? 0 : 1);     // dữ liệu cũ chưa có hộp
+const denHan = o => !o.den || o.den <= homNay();
+const trongSo = o => !!o && o.s > 0 && layHop(o) < HOP_CUOI;                   // câu từng sai và chưa thuộc
+const canOnLai = o => trongSo(o) && denHan(o);
+
+function ghiNhanCau(q, dung) {
+  const tk = doc(KHOA.thongKe, {});
+  const o = tk[q.id] || { d: 0, s: 0, cuoi: '' };
+  const hop = layHop(o);
+  if (dung) o.d++; else o.s++;
+  o.cuoi = dung ? 'd' : 's';
+  o.h = dung ? (denHan(o) ? Math.min(HOP_CUOI, hop + 1) : hop) : 0;
+  if (!dung || o.h !== hop || !o.den) o.den = congNgay(KHOANG[o.h]);
+  tk[q.id] = o;
+  ghi(KHOA.thongKe, tk);
+  ghiNgay(dung);
+}
+
+// Số câu đã làm mỗi ngày (giữ 400 ngày gần nhất) để tính mục tiêu hằng ngày và chuỗi ngày
+const mucTieu = () => Math.min(500, Math.max(1, parseInt(caiDat().mucTieu) || 10));
+function ghiNgay(dung) {
+  const nk = doc(KHOA.ngay, {}), k = homNay();
+  const o = nk[k] || { c: 0, d: 0 };
+  o.c++; if (dung) o.d++; o.m = mucTieu();
+  nk[k] = o;
+  const khoa = Object.keys(nk).sort();
+  khoa.slice(0, Math.max(0, khoa.length - 400)).forEach(x => delete nk[x]);
+  ghi(KHOA.ngay, nk);
+}
+const datMucTieu = (nk, k) => { const o = nk[k]; return !!o && o.c >= (k === homNay() ? mucTieu() : o.m || 10); };
+function chuoiNgay() {        // số ngày liên tiếp đạt mục tiêu; hôm nay chưa đạt thì chuỗi vẫn được giữ tới hôm qua
+  const nk = doc(KHOA.ngay, {}), d = new Date();
+  if (!datMucTieu(nk, khoaNgay(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (datMucTieu(nk, khoaNgay(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+// Điểm: mục CLC chấm thang 10; mục TIMO mỗi câu đúng được diemCau điểm (30 câu × 4 = 120 điểm).
+const thangDiem = () => BO_DE[boDe].thang;
+const diemQuyDoi = e => e.diem / (e.toiDa || 10) * thangDiem();     // đưa về thang chuẩn của mục để so sánh các lượt
+// Ngân hàng chỉ có một môn (như TIMO: chỉ có Toán) thì thống kê/chia đề theo chủ đề thay vì theo môn
+const motMon = () => dsMon().length === 1;
+const nhomCua = (q, mot) => (mot ? q.chuDe : q.mon);
+function luuLuot(loai, kq, giay, ten) {
+  const dung = kq.filter(x => dungCau(x.q, x.chon)).length;
+  const theoMon = {}, mot = motMon();
+  kq.forEach(x => {
+    const k = nhomCua(x.q, mot);
+    const m = theoMon[k] || (theoMon[k] = { dung: 0, tong: 0 });
+    m.tong++; if (dungCau(x.q, x.chon)) m.dung++;
+  });
+  const diemCau = BO_DE[boDe].diemCau;
+  const e = { id: taoId(), loai, ten, ngay: new Date().toISOString(), dung, tong: kq.length,
+              diem: diemCau ? dung * diemCau : (kq.length ? Math.round(dung / kq.length * 1000) / 100 : 0),
+              toiDa: diemCau ? kq.length * diemCau : 10, giay, theoMon };
+  const ls = doc(KHOA.lichSu, []); ls.push(e);
+  ghi(KHOA.lichSu, ls.slice(-500));
+  return e;
+}
+
+/* ============================================================
+   Khung giao diện
+   ============================================================ */
+const app = document.getElementById('app');
+const MUC = [['trangchu', 'Trang chủ'], ['luyen', 'Luyện tập'], ['on', 'Ôn câu sai'], ['thi', 'Thi thử'], ['nganhang', 'Ngân hàng đề'], ['thongke', 'Thống kê']];
+let dongHoId = null;
+const dungDongHo = () => { if (dongHoId) { clearInterval(dongHoId); dongHoId = null; } };
+function hienNav(trang) {
+  document.querySelectorAll('#menu button').forEach(b => {
+    if (b.dataset.trang === trang) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+}
+function di(trang) { dungDongHo(); hienNav(trang); TRANG[trang](); window.scrollTo(0, 0); }
+// replaceChildren nhưng bỏ qua null/false (chuyển null thành chữ "null" là lỗi dễ gặp)
+function thay(el, ...nodes) { el.replaceChildren(...nodes.flat(Infinity).filter(x => x != null && x !== false)); }
+function dat(...nodes) { thay(app, ...nodes); }
+document.getElementById('menu').append(...MUC.map(([k, t]) => h('button', { 'data-trang': k, onclick: () => di(k) }, t)));
+
+const tieuDe = (t, p) => h('div', { class: 'tieu-de' }, h('h1', null, t), p ? h('p', null, p) : null);
+const truong = (nhan, control, ghiChu) => h('div', { class: 'truong' }, h('label', null, nhan), control, ghiChu ? h('small', null, ghiChu) : null);
+
+/* ============================================================
+   Trang chủ
+   ============================================================ */
+const TEN_THU = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+function theHomNay() {
+  const nk = doc(KHOA.ngay, {}), c = nk[homNay()]?.c || 0, mt = mucTieu(), chuoi = chuoiNgay();
+  const chon = h('select', { 'aria-label': 'Mục tiêu mỗi ngày', style: 'width:auto', onchange: ev => { ghi(KHOA.cai, { ...caiDat(), mucTieu: Number(ev.target.value) }); trangChu(); } },
+    [...new Set([5, 10, 15, 20, 30, 50, mt])].sort((a, b) => a - b).map(n => h('option', { value: n }, n + ' câu mỗi ngày')));
+  chon.value = String(mt);
+  const tuan = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = khoaNgay(d);
+    tuan.push(h('span', { class: i === 0 ? 'nay' : '' }, h('i', { class: datMucTieu(nk, k) ? 'dat' : nk[k]?.c ? 'mot' : '' }), i === 0 ? 'Nay' : TEN_THU[d.getDay()]));
+  }
+  return h('div', { class: 'the' },
+    h('div', { class: 'hang giua', style: 'margin-bottom:10px' }, h('h2', { style: 'font-size:1.05rem' }, 'Mục tiêu hôm nay'), chon),
+    h('div', { class: 'muc-tieu__dong' }, h('b', null, `${c}/${mt}`), h('span', { class: 'meta', style: 'margin:0' }, 'câu đã làm' + (c >= mt ? ' · Đã đạt mục tiêu!' : ` · còn ${mt - c} câu nữa là đạt`))),
+    h('div', { class: 'tien-do', style: 'margin:0' }, h('i', { style: `width:${Math.min(100, c / mt * 100)}%` })),
+    h('p', { class: 'meta', style: 'margin:8px 0 0' }, chuoi ? `Chuỗi ${chuoi} ngày liên tiếp đạt mục tiêu.` : 'Đạt mục tiêu mỗi ngày để tạo chuỗi ngày học liên tiếp.'),
+    h('div', { class: 'tuan', role: 'img', 'aria-label': '7 ngày gần nhất: vòng đặc là ngày đạt mục tiêu, viền là ngày có làm bài nhưng chưa đạt' }, tuan));
+}
+
+function trangChu() {
+  const ds = tatCaCau(), ls = doc(KHOA.lichSu, []), tk = doc(KHOA.thongKe, {});
+  const thi = ls.filter(x => x.loai === 'thi');
+  const tb = thi.length ? thi.reduce((a, x) => a + diemQuyDoi(x), 0) / thi.length : null;
+  const canOn = ds.filter(q => canOnLai(tk[q.id])).length;
+  const dangThi = doc(KHOA.dangThi, null);
+
+  dat(
+    tieuDe(BO_DE[boDe].tieuDe, BO_DE[boDe].moTa),
+    boDe === 'timo' && !caiDat().anMau ? h('div', { class: 'thong-bao canh-bao' }, 'Các câu mẫu trong mục TIMO do app tự soạn theo dạng bài toán quốc tế, không phải đề TIMO thật. Hãy nhập đề thật của bạn ở mục "Ngân hàng đề".') : null,
+    canNhacSaoLuu() ? h('div', { class: 'thong-bao' }, h('div', { class: 'hang giua' },
+      h('span', null, 'Dữ liệu chỉ nằm trong trình duyệt này và sẽ mất nếu xóa dữ liệu duyệt web. Hãy tải một bản sao lưu.'),
+      h('button', { class: 'btn nho', onclick: hopThoaiSaoLuu }, 'Sao lưu ngay'))) : null,
+    theHomNay(),
+    dangThi ? h('div', { class: 'thong-bao canh-bao' },
+      h('div', { class: 'hang giua' },
+        h('span', null, 'Bạn có một bài thi thử đang làm dở. Đồng hồ vẫn chạy cho đến hết giờ.'),
+        h('button', { class: 'btn nho', onclick: () => phienThi(dangThi) }, 'Làm tiếp'))) : null,
+    h('div', { class: 'luoi' },
+      h('div', { class: 'so-lieu' }, h('b', null, ds.length), h('span', null, 'câu hỏi trong ngân hàng · ' + dsMon().length + ' môn')),
+      h('div', { class: 'so-lieu' }, h('b', null, thi.length), h('span', null, 'lượt thi thử')),
+      h('div', { class: 'so-lieu' }, h('b', null, tb == null ? '–' : soVN(tb)), h('span', null, `điểm trung bình thi thử (thang ${thangDiem()})`)),
+      h('div', { class: 'so-lieu' }, h('b', null, canOn), h('span', null, 'câu đến hạn ôn lại trong sổ câu sai'))),
+    h('div', { style: 'height:16px' }),
+    h('div', { class: 'luoi' },
+      h('button', { class: 'hanh-dong', onclick: () => di('luyen') }, h('strong', null, 'Luyện tập'), h('span', null, 'Chọn môn, chủ đề; xem đáp án và giải thích ngay sau mỗi câu.')),
+      h('button', { class: 'hanh-dong', onclick: () => di('thi') }, h('strong', null, 'Thi thử có tính giờ'), h('span', null, boDe === 'timo' ? 'Đề tối đa 25 câu, mỗi câu 4 điểm (tối đa 100 điểm), 120 phút, đồng hồ đếm ngược.' : 'Đề tổng hợp nhiều môn hoặc đề của các trường (Thanh Xuân, Cầu Giấy, ...), đồng hồ đếm ngược, chấm điểm thang 10.')),
+      h('button', { class: 'hanh-dong', onclick: () => di('nganhang') }, h('strong', null, 'Nhập đề của bạn'), h('span', null, 'Nạp câu hỏi từ Excel, Word, văn bản để luyện với đề thật.')),
+      canOn ? h('button', { class: 'hanh-dong', onclick: () => phienLuyen(xao(ds.filter(q => canOnLai(tk[q.id]))).slice(0, 20).map(xaoDapAn), 'Ôn câu sai') },
+        h('strong', null, 'Ôn câu đến hạn'), h('span', null, canOn + ' câu đang chờ bạn ôn lại hôm nay.')) : h('button', { class: 'hanh-dong', onclick: () => di('on') },
+        h('strong', null, 'Sổ câu sai'), h('span', null, 'Các câu làm sai được lưu lại và nhắc ôn đúng lúc.'))),
+    kho ? null : h('p', { class: 'meta' }, 'Lưu ý: trình duyệt đang chặn lưu dữ liệu nên lịch sử sẽ mất khi đóng trang.')
+  );
+}
+
+/* ============================================================
+   Luyện tập
+   ============================================================ */
+function locCau({ mon, chuDe, nguon }) {
+  const tk = doc(KHOA.thongKe, {});
+  return tatCaCau().filter(q => (!mon || q.mon === mon) && (!chuDe || q.chuDe === chuDe) &&
+    (nguon === 'tatca' || (nguon === 'sai' && tk[q.id]?.cuoi === 's') || (nguon === 'chua' && !tk[q.id])));
+}
+
+function luyenCauHinh() {
+  if (!tatCaCau().length) return dat(tieuDe('Luyện tập'), h('div', { class: 'the trong' }, 'Ngân hàng đang trống. ', h('button', { class: 'btn nho', onclick: () => di('nganhang') }, 'Nhập câu hỏi')));
+  const selMon = h('select', null, h('option', { value: '' }, 'Tất cả các môn'), dsMon().map(m => h('option', { value: m }, m)));
+  const selDe = h('select');
+  const selNguon = h('select', null,
+    h('option', { value: 'tatca' }, 'Tất cả câu hỏi'),
+    h('option', { value: 'sai' }, 'Chỉ câu từng làm sai'),
+    h('option', { value: 'chua' }, 'Chỉ câu chưa làm lần nào'));
+  const selSo = h('select', null, [5, 10, 20, 30, 50].map(n => h('option', { value: n }, n + ' câu')), h('option', { value: 0 }, 'Tất cả'));
+  selSo.value = '10';
+  const info = h('p', { class: 'meta' });
+  const bat = h('button', { class: 'btn' }, 'Bắt đầu luyện tập');
+
+  const capNhat = () => {
+    const cur = selDe.value;
+    selDe.replaceChildren(h('option', { value: '' }, 'Tất cả chủ đề'), ...dsChuDe(selMon.value).map(c => h('option', { value: c }, c)));
+    selDe.value = [...selDe.options].some(o => o.value === cur) ? cur : '';
+    const n = locCau({ mon: selMon.value, chuDe: selDe.value, nguon: selNguon.value }).length;
+    info.textContent = n ? `Có ${n} câu phù hợp.` : 'Không có câu nào phù hợp với lựa chọn này.';
+    bat.disabled = !n;
+  };
+  selMon.addEventListener('change', capNhat); selDe.addEventListener('change', capNhat); selNguon.addEventListener('change', capNhat);
+  bat.addEventListener('click', () => {
+    let ds = xao(locCau({ mon: selMon.value, chuDe: selDe.value, nguon: selNguon.value }));
+    const n = Number(selSo.value); if (n) ds = ds.slice(0, n);
+    phienLuyen(ds.map(xaoDapAn), selMon.value || 'Tổng hợp');
+  });
+  dat(
+    tieuDe('Luyện tập', 'Làm từng câu, biết ngay đúng sai và đọc lời giải thích.'),
+    h('div', { class: 'the' },
+      h('div', { class: 'hai-cot' }, truong('Môn', selMon), truong('Chủ đề', selDe)),
+      h('div', { class: 'hai-cot' }, truong('Nguồn câu hỏi', selNguon), truong('Số câu', selSo)),
+      info, bat));
+  capNhat();
+}
+
+function phienLuyen(ds, ten) {
+  dungDongHo(); hienNav('luyen');
+  const kq = [], bat = Date.now();
+  let i = 0;
+  const lam = new Set();       // chỉ số các câu đã trả lời; câu bỏ qua không nằm trong đây nên có thể quay lại làm
+  const keTiep = () => { let j = i + 1; while (j < ds.length && lam.has(j)) j++; return j; }       // câu chưa làm kế tiếp (= ds.length nếu hết)
+  const keTruoc = () => { let j = i - 1; while (j >= 0 && lam.has(j)) j--; return j; }              // câu chưa làm gần nhất phía trước (-1 nếu không có)
+  const ve = () => {
+    if (i >= ds.length) {      // đi hết lượt mà còn câu bỏ qua → hỏi có muốn làm lại không
+      const chua = ds.map((_, k) => k).filter(k => !lam.has(k));
+      if (chua.length && confirm(`Còn ${chua.length} câu bạn đã bỏ qua. Bấm OK để làm lại các câu đó, Hủy để xem kết quả.`)) { i = chua[0]; return ve(); }
+      return ketThuc();
+    }
+    const q = ds[i]; let daChon = null;
+    // Nút sang câu sau luôn hiện: chưa trả lời thì là "Bỏ qua" (câu bỏ qua không tính điểm), trả lời rồi thì thành nút chính
+    const cuoi = keTiep() >= ds.length;
+    const nutTiep = h('button', { class: 'btn vien', onclick: () => { i = keTiep(); ve(); } }, cuoi ? 'Bỏ qua và xem kết quả' : 'Bỏ qua, sang câu tiếp →');
+    const nutLui = keTruoc() >= 0 ? h('button', { class: 'btn vien', onclick: () => { i = keTruoc(); ve(); } }, '← Quay lại câu chưa làm') : null;
+    const daLam = () => { nutTiep.className = 'btn'; nutTiep.textContent = cuoi ? 'Xem kết quả' : 'Câu tiếp theo →'; nutTiep.focus(); };
+    const vung = h('div');
+    let nut = [], oDien = null;
+    if (laDien(q)) {            // câu điền đáp án: gõ kết quả rồi bấm Kiểm tra (hoặc Enter)
+      oDien = h('input', { type: 'text', class: 'o-dien', placeholder: 'Nhập đáp án của bạn', autocomplete: 'off', inputmode: 'text' });
+      const kiemTra = () => {
+        if (daChon != null || !oDien.value.trim()) return;
+        const v = oDien.value.trim(), dung = khopDien(q, v);
+        daChon = v; lam.add(i); kq.push({ q, chon: v });
+        ghiNhanCau(q, dung);
+        oDien.disabled = true; btnKt.disabled = true; oDien.classList.add(dung ? 'dung' : 'sai');
+        thay(vung,
+          h('p', { class: 'phan-hoi ' + (dung ? 'dung' : 'sai') }, dung ? 'Chính xác!' : ['Chưa đúng. Đáp án đúng là ', vb(dungText(q)), '.']),
+          q.giaiThich ? h('div', { class: 'giai-thich' }, h('b', null, 'Giải thích: '), vb(q.giaiThich)) : null, giaiHinhQ(q));
+        daLam();
+      };
+      const btnKt = h('button', { class: 'btn', onclick: kiemTra }, 'Kiểm tra');
+      oDien.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); kiemTra(); } });
+      nut = [h('div', { class: 'hang dien-hang' }, oDien, btnKt)];
+    } else nut = q.dapAn.map((t, k) => h('button', { class: 'dap-an', onclick: () => {
+      if (daChon != null) return;
+      daChon = k; lam.add(i); kq.push({ q, chon: k });
+      ghiNhanCau(q, k === q.dung);
+      nut.forEach((b, j) => { b.disabled = true; if (j === q.dung) b.classList.add('dung'); else if (j === k) b.classList.add('sai'); });
+      thay(vung,
+        h('p', { class: 'phan-hoi ' + (k === q.dung ? 'dung' : 'sai') }, k === q.dung ? 'Chính xác!' : `Chưa đúng. Đáp án đúng là ${CHU_CAI[q.dung]}.`),
+        q.giaiThich ? h('div', { class: 'giai-thich' }, h('b', null, 'Giải thích: '), vb(q.giaiThich)) : null, giaiHinhQ(q));
+      daLam();
+    } }, h('span', { class: 'chu-cai' }, CHU_CAI[k]), h('span', { class: 'nd' }, noiDungLc(t, k))));
+    dat(
+      tieuDe('Luyện tập: ' + ten),
+      h('div', { class: 'tien-do' }, h('i', { style: `width:${i / ds.length * 100}%` })),
+      h('div', { class: 'the' },
+        h('div', { class: 'meta' }, `Câu ${i + 1}/${ds.length} · ${q.mon} · ${q.chuDe}`),
+        h('div', { class: 'cau-nd' }, vb(q.nd)), hinhQ(q), nut, vung, h('div', { class: 'hang' }, nutLui, nutTiep)),
+      h('button', { class: 'btn vien nho', onclick: () => { if (!kq.length || confirm('Dừng luyện tập? Kết quả các câu đã làm vẫn được ghi nhận vào thống kê câu hỏi.')) di('luyen'); } }, 'Dừng'));
+  };
+  const ketThuc = () => {
+    if (!kq.length) { di('luyen'); return thongBao('Bạn đã bỏ qua tất cả các câu nên chưa có kết quả để lưu.'); }
+    const e = luuLuot('luyen', kq, Math.round((Date.now() - bat) / 1000), ten);
+    hienKetQua(e, kq, { lamLai: () => di('luyen') });
+  };
+  ve();
+}
+
+/* ============================================================
+   Thi thử
+   ============================================================ */
+function chonCanBang(mons, tong) {
+  const tat = tatCaCau();
+  // Chỉ một môn (ví dụ TIMO chỉ có Toán) thì chia đều theo chủ đề để đề bao quát các dạng bài
+  const nhom = mons.length === 1
+    ? [...new Set(tat.filter(q => q.mon === mons[0]).map(q => q.chuDe))].map(c => xao(tat.filter(q => q.mon === mons[0] && q.chuDe === c)))
+    : mons.map(m => xao(tat.filter(q => q.mon === m)));
+  const chon = nhom.map(() => []);
+  let con = tong, vong = true;
+  while (con > 0 && vong) {            // chia đều từng lượt, môn nào hết câu thì bỏ qua
+    vong = false;
+    for (let k = 0; k < nhom.length && con > 0; k++) {
+      if (nhom[k].length) { chon[k].push(nhom[k].pop()); con--; vong = true; }
+    }
+  }
+  return chon.flat();
+}
+
+/* Đề của các trường (chỉ mục CLC): câu có chủ đề dạng "Thanh Xuân 2019–2020" (tên trường + năm học) được gom thành
+   từng đề; làm nguyên đề theo thứ tự câu trong đề, có tính giờ. Không cần thêm trường dữ liệu riêng cho câu hỏi.
+   Tên đề là năm học ("2023–2024") hoặc đề đánh số ("Đề luyện 01", "Đề số 2", "Test 3"). */
+const RE_DE_TRUONG = /^(.+?)\s+((?:19|20)\d\d(?:\s*[–—-]\s*(?:19|20)\d\d)?(?:\s*\([^)]*\))?|(?:Đề|Test)(?:\s+[^\d\s]+)?\s+\d{1,3})$/i;     // năm học có thể kèm ghi chú trong ngoặc: "2020–2021 (nâng cao)"
+const TEN_TRUONG_KHAC = { 'nang khieu': 'Năng Khiếu Sư Phạm' };      // cách gọi khác của cùng một trường (khóa: tên bỏ dấu, chữ thường) → tên chuẩn
+const truongDeCua = q => {
+  const m = RE_DE_TRUONG.exec(String(q.chuDe || '').trim());
+  if (!m) return null;
+  const ten = m[1].trim();
+  return { tenTruong: TEN_TRUONG_KHAC[boDau(ten)] || ten, de: m[2].replace(/\s*[–—-]\s*/, '–') };
+};
+const chuDeChuan = q => { const t = truongDeCua(q); return t ? t.tenTruong + ' ' + t.de : String(q.chuDe || ''); };
+const laDeNam = de => /^(19|20)\d\d/.test(de);                    // đề theo năm học (mới nhất lên trước) hay đề đánh số (theo thứ tự tăng dần)
+const tenBaiThi = (tenTruong, de, mon) => (laDeNam(de) ? `Đề ${tenTruong} ${de}` : `${tenTruong} · ${de}`) + ` · ${mon}`;
+const MON_TRUONG = ['Toán', 'Tiếng Việt', 'Tiếng Anh'];        // ba môn thi vào lớp 6 chuyên/chất lượng cao; luôn hiện đủ ba mục
+const monDeCua = q => {          // gom các cách ghi môn ("Tieng Anh", "English", "Văn"...) về ba môn chuẩn; môn lạ giữ nguyên
+  const m = String(q.mon || '').trim(), t = m.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
+  return /^toan(\s|$)/.test(t) ? 'Toán' : /^(tieng\s*)?viet(\s|$)|^van(\s|$)/.test(t) ? 'Tiếng Việt' : /^(tieng\s*)?anh(\s|$)|^english(\s|$)/.test(t) ? 'Tiếng Anh' : m;
+};
+function dsDeTruong(mon) {       // [{tenTruong, des: [{de, cau: [q]}]}] của một môn (bỏ trống = mọi môn): trường theo A–Z, đề mới nhất lên trước
+  const mapT = new Map();
+  tatCaCau().forEach(q => {
+    const t = truongDeCua(q); if (!t || (mon && monDeCua(q) !== mon)) return;
+    const mapD = mapT.get(t.tenTruong) || mapT.set(t.tenTruong, new Map()).get(t.tenTruong);
+    (mapD.get(t.de) || mapD.set(t.de, []).get(t.de)).push(q);
+  });
+  return [...mapT].sort((a, b) => a[0].localeCompare(b[0], 'vi'))
+    .map(([tenTruong, mapD]) => ({ tenTruong, des: [...mapD].sort((a, b) => (laDeNam(a[0]) ? -1 : 1) * a[0].localeCompare(b[0], 'vi', { numeric: true })).map(([de, cau]) => ({ de, cau })) }));
+}
+let thiTab = 'tong';             // 'tong' (đề tổng hợp) | 'truong' (đề của các trường)
+let thiMonTruong = 'Toán';       // môn đang xem trong tab đề của các trường
+let thiTruongChon = '';          // trường đang xem ('' = tất cả các trường)
+const PHUT_DE_TRUONG = 40;
+
+function thiTheoTruong(dangThi) {
+  const phut = h('input', { type: 'number', min: 1, max: 300, value: PHUT_DE_TRUONG });
+  const ls = doc(KHOA.lichSu, []).filter(x => x.loai === 'thi');
+  const cacMon = MON_TRUONG.concat([...new Set(tatCaCau().filter(q => truongDeCua(q)).map(monDeCua))].filter(m => m && !MON_TRUONG.includes(m)));
+  if (!cacMon.includes(thiMonTruong)) thiMonTruong = cacMon[0];
+  const cacTruong = dsDeTruong();                                  // mọi môn: dùng cho hàng nút chọn trường
+  if (thiTruongChon && !cacTruong.some(t => t.tenTruong === thiTruongChon)) thiTruongChon = '';
+  const demDe = (m, truong) => dsDeTruong(m).filter(t => !truong || t.tenTruong === truong).reduce((n, t) => n + t.des.length, 0);
+  const mon = thiMonTruong, truongs = dsDeTruong(mon).filter(t => !thiTruongChon || t.tenTruong === thiTruongChon);
+  const chonTruong = ten => {                                      // đổi trường; nếu môn đang xem không có đề của trường đó thì chuyển sang môn có đề
+    thiTruongChon = ten;
+    if (!demDe(thiMonTruong, ten)) thiMonTruong = cacMon.find(m => demDe(m, ten)) || thiMonTruong;
+    thiCauHinh();
+  };
+  const batDau = (tenTruong, de, cau) => {
+    if (dangThi && !confirm('Bạn đang có bài thi dở dang. Bắt đầu bài mới sẽ bỏ bài cũ. Tiếp tục?')) return;
+    const p = Math.min(300, Math.max(1, parseInt(phut.value) || PHUT_DE_TRUONG));
+    const ds = cau.map(xaoDapAn), bd = Date.now();          // giữ nguyên thứ tự câu như đề thật
+    phienThi({ id: taoId(), ten: tenBaiThi(tenTruong, de, mon), ds, tl: ds.map(() => null), dau: ds.map(() => false), i: 0, batDau: bd, hetGio: bd + p * 60000, soPhut: p });
+  };
+  return [
+    h('div', { class: 'nhan', style: 'margin:0 0 6px' }, 'Trường'),
+    h('div', { class: 'hang', style: 'margin:0 0 14px' }, [{ tenTruong: '', ten: 'Tất cả các trường' }, ...cacTruong.map(t => ({ tenTruong: t.tenTruong, ten: t.tenTruong }))].map(t =>
+      h('button', { class: 'btn nho' + (t.tenTruong === thiTruongChon ? '' : ' vien'), 'aria-pressed': String(t.tenTruong === thiTruongChon), onclick: () => chonTruong(t.tenTruong) },
+        t.ten, ' ', h('span', { class: 'tem', style: 'margin-left:4px' }, cacMon.reduce((n, m) => n + demDe(m, t.tenTruong), 0) + ' đề')))),
+    h('div', { class: 'nhan', style: 'margin:0 0 6px' }, 'Môn'),
+    h('div', { class: 'hang', style: 'margin:0 0 14px' }, cacMon.map(m =>
+      h('button', { class: 'btn' + (m === mon ? '' : ' vien'), onclick: () => { thiMonTruong = m; thiCauHinh(); } }, m, ' ', h('span', { class: 'tem', style: 'margin-left:4px' }, demDe(m, thiTruongChon) + ' đề')))),
+    h('div', { class: 'the' }, h('div', { class: 'hai-cot' }, truong('Thời gian làm bài (phút)', phut, 'Đề của trường thường 40–45 phút; đổi tùy ý trước khi bắt đầu.')),
+      h('p', { class: 'meta', style: 'margin:0' }, 'Chọn một đề của trường để làm nguyên đề theo thứ tự câu như đề thật. Câu hỏi thuộc đề của trường khi có "Môn" (Toán, Tiếng Việt, Tiếng Anh) và "Chủ đề" dạng "Cầu Giấy 2023–2024" (tên trường + năm học).')),
+    ...(truongs.length ? truongs.map(t => h('div', { class: 'the' },
+      h('h3', { style: 'margin:0 0 4px' }, t.tenTruong), h('p', { class: 'meta', style: 'margin-top:0' }, `${t.des.length} đề môn ${mon}`),
+      t.des.map(d => {
+        const lan = ls.filter(x => x.ten === tenBaiThi(t.tenTruong, d.de, mon));
+        const tot = lan.reduce((m, x) => Math.max(m, x.diem / (x.toiDa || 10) * 10), 0);
+        return h('div', { class: 'dong-cau' },
+          h('div', { class: 'nd' }, h('div', null, h('b', null, laDeNam(d.de) ? 'Năm học ' + d.de : d.de)),
+            h('div', { class: 'meta', style: 'margin:0' }, `${d.cau.length} câu` + (lan.length ? ` · đã thi ${lan.length} lần · cao nhất ${soVN(Math.round(tot * 100) / 100)}/10` : ' · chưa thi'))),
+          h('button', { class: 'btn nho', onclick: () => batDau(t.tenTruong, d.de, d.cau) }, 'Làm bài'));
+      }))) : [h('div', { class: 'the trong' }, thiTruongChon ? `Trường ${thiTruongChon} chưa có đề môn ${mon}. ` : `Chưa có đề của trường nào cho môn ${mon}. `,
+      h('button', { class: 'btn nho', onclick: () => di('nganhang') }, 'Nhập đề'))])
+  ];
+}
+
+function thiCauHinh() {
+  const mons = dsMon();
+  if (!mons.length) return dat(tieuDe('Thi thử'), h('div', { class: 'the trong' }, 'Ngân hàng đang trống. ', h('button', { class: 'btn nho', onclick: () => di('nganhang') }, 'Nhập câu hỏi')));
+  const dangThi = doc(KHOA.dangThi, null);
+  const coTruong = boDe === 'clc' && dsDeTruong().length > 0;
+  if (!coTruong) thiTab = 'tong';
+  const tab = coTruong ? h('div', { class: 'hang', style: 'margin:0 0 14px' },
+    [['tong', 'Đề tổng hợp'], ['truong', 'Đề của các trường']].map(([k, t]) => h('button', { class: 'btn nho' + (thiTab === k ? '' : ' vien'), onclick: () => { thiTab = k; thiCauHinh(); } }, t))) : null;
+  const tick = mons.map(m => h('input', { type: 'checkbox', value: m, checked: true }));
+  const gioiHan = BO_DE[boDe].toiDaCau || Infinity;     // số câu tối đa của một đề (TIMO: 25)
+  const inSo =h('input', { type: 'number', min: 1, value: BO_DE[boDe].soCau });
+  const inPhut = h('input', { type: 'number', min: 1, max: 300, value: BO_DE[boDe].phut });
+  const info = h('p', { class: 'meta' });
+  const bat = h('button', { class: 'btn' }, 'Bắt đầu làm bài');
+  const chonMon = () => tick.filter(t => t.checked).map(t => t.value);
+  const capNhat = () => {
+    const co = tatCaCau().filter(q => chonMon().includes(q.mon)).length;
+    inSo.max = Math.min(co, gioiHan);
+    info.textContent = co
+      ? `Ngân hàng có ${co} câu${chonMon().length === 1 ? '' : ' thuộc các môn đã chọn'}. Đề sẽ chia đều số câu cho từng ${chonMon().length === 1 ? 'chủ đề' : 'môn'}${gioiHan < Infinity ? `, tối đa ${gioiHan} câu mỗi đề` : ''}.`
+      : 'Hãy chọn ít nhất một môn.';
+    bat.disabled = !co;
+  };
+  tick.forEach(t => t.addEventListener('change', capNhat));
+  bat.addEventListener('click', () => {
+    if (dangThi && !confirm('Bạn đang có bài thi dở dang. Bắt đầu bài mới sẽ bỏ bài cũ. Tiếp tục?')) return;
+    const co = tatCaCau().filter(q => chonMon().includes(q.mon)).length;
+    const n = Math.min(co, gioiHan, Math.max(1, parseInt(inSo.value) || 1));
+    const phut = Math.min(300, Math.max(1, parseInt(inPhut.value) || 30));
+    const ds = chonCanBang(chonMon(), n).map(xaoDapAn);
+    const bd = Date.now();
+    phienThi({ id: taoId(), ds, tl: ds.map(() => null), dau: ds.map(() => false), i: 0, batDau: bd, hetGio: bd + phut * 60000, soPhut: phut });
+  });
+  dat(
+    tieuDe('Thi thử có tính giờ', 'Làm bài như thi thật: hết giờ hệ thống tự nộp bài.'),
+    dangThi ? h('div', { class: 'thong-bao canh-bao' }, h('div', { class: 'hang giua' },
+      h('span', null, 'Bạn có một bài thi đang làm dở' + (dangThi.ten ? ` (${dangThi.ten})` : '') + '.'),
+      h('button', { class: 'btn nho', onclick: () => phienThi(dangThi) }, 'Làm tiếp'))) : null,
+    tab,
+    thiTab === 'truong' ? thiTheoTruong(dangThi) : h('div', { class: 'the' },
+      h('div', { class: 'truong' }, h('span', { class: 'nhan' }, 'Các môn thi'), h('div', { class: 'chon-mon' }, mons.map((m, k) => h('label', null, tick[k], m)))),
+      h('div', { class: 'hai-cot' }, truong('Số câu', inSo), truong('Thời gian (phút)', inPhut)),
+      info, bat));
+  capNhat();
+}
+
+function phienThi(E) {
+  dungDongHo(); hienNav('thi');
+  const luu = () => ghi(KHOA.dangThi, E);
+  luu();
+  const tick = () => {
+    const con = Math.max(0, Math.ceil((E.hetGio - Date.now()) / 1000));
+    const el = document.getElementById('dongho');
+    if (el) { el.textContent = mmss(con); el.classList.toggle('gap', con <= 60); }
+    if (con <= 0) { dungDongHo(); nop(true); }
+  };
+  const nop = (hetGio) => {
+    if (!hetGio) {
+      const chua = E.tl.filter(x => x == null).length;
+      if (!confirm(chua ? `Còn ${chua} câu chưa làm. Bạn vẫn muốn nộp bài?` : 'Nộp bài và xem kết quả?')) return;
+    }
+    if (E.xong) return;
+    E.xong = true; dungDongHo();
+    const kq = E.ds.map((q, k) => ({ q, chon: E.tl[k] }));
+    kq.forEach(x => { if (x.chon != null) ghiNhanCau(x.q, dungCau(x.q, x.chon)); });
+    const giay = Math.min(E.soPhut * 60, Math.round((Date.now() - E.batDau) / 1000));
+    const e = luuLuot('thi', kq, giay, E.ten || `Đề thi ${E.ds.length} câu / ${E.soPhut} phút`);
+    ghi(KHOA.dangThi, null);
+    hienKetQua(e, kq, { lamLai: () => di('thi'), hetGio });
+  };
+  const ve = () => {
+    const q = E.ds[E.i], n = E.ds.length;
+    const dem = E.tl.filter(x => x != null).length;
+    const demEl = h('div', { class: 'co-gian meta', style: 'margin:0' }, `Đã làm ${dem}/${n} câu`);
+    let nut;
+    if (laDien(q)) {            // câu điền đáp án: lưu ngay khi gõ, không vẽ lại để khỏi mất con trỏ
+      const o = h('input', { type: 'text', class: 'o-dien', placeholder: 'Nhập đáp án của bạn', autocomplete: 'off', value: E.tl[E.i] ?? '' });
+      o.addEventListener('input', () => {
+        E.tl[E.i] = o.value.trim() || null; luu();
+        demEl.textContent = `Đã làm ${E.tl.filter(x => x != null).length}/${n} câu`;
+        nutLuoi[E.i].classList.toggle('da', E.tl[E.i] != null);
+      });
+      nut = [o, h('p', { class: 'meta' }, 'Gõ kết quả cuối cùng (số, phân số như 3/4, có thể thêm đơn vị). Xóa hết chữ để bỏ trống.')];
+    } else nut = q.dapAn.map((t, k) => h('button', { class: 'dap-an' + (E.tl[E.i] === k ? ' chon' : ''), onclick: () => {
+      E.tl[E.i] = E.tl[E.i] === k ? null : k; luu(); ve();
+    } }, h('span', { class: 'chu-cai' }, CHU_CAI[k]), h('span', { class: 'nd' }, noiDungLc(t, k))));
+    const nutLuoi = [];
+    const luoi = E.ds.map((_, k) => nutLuoi[k] = h('button', {
+      class: [E.tl[k] != null ? 'da' : '', E.dau[k] ? 'dau' : '', k === E.i ? 'hien' : ''].join(' ').trim(),
+      'aria-label': `Câu ${k + 1}`, onclick: () => { E.i = k; luu(); ve(); } }, k + 1));
+    dat(
+      h('div', { class: 'thanh-thi' },
+        h('div', { class: 'dong-ho', id: 'dongho' }, '--:--'),
+        demEl,
+        h('button', { class: 'btn nho', onclick: () => nop(false) }, 'Nộp bài')),
+      h('div', { class: 'the' },
+        h('div', { class: 'meta' }, `Câu ${E.i + 1}/${n} · ${q.mon}${q.chuDe ? ' · ' + q.chuDe : ''}`),
+        h('div', { class: 'cau-nd' }, vb(q.nd)), hinhQ(q), nut,
+        h('div', { class: 'hang giua' },
+          h('button', { class: 'btn vien', disabled: E.i === 0, onclick: () => { E.i--; luu(); ve(); } }, '← Câu trước'),
+          h('button', { class: 'btn vien', onclick: () => { E.dau[E.i] = !E.dau[E.i]; luu(); ve(); } }, E.dau[E.i] ? 'Bỏ đánh dấu' : 'Đánh dấu xem lại'),
+          h('button', { class: 'btn vien', disabled: E.i === n - 1, onclick: () => { E.i++; luu(); ve(); } }, 'Câu sau →'))),
+      h('div', { class: 'the' }, h('div', { class: 'nhan' }, 'Danh sách câu'), h('div', { style: 'height:8px' }),
+        h('div', { class: 'luoi-cau' }, luoi),
+        h('div', { class: 'chu-giai' }, h('span', null, 'Ô nền màu: đã làm'), h('span', null, 'Chấm vàng: đánh dấu xem lại'), h('span', null, 'Bấm lại đáp án đã chọn để bỏ chọn'))));
+    tick();
+  };
+  dongHoId = setInterval(tick, 500);   // đặt trước khi vẽ để tick() có thể tự dừng khi đã hết giờ
+  ve();
+}
+
+/* ============================================================
+   Kết quả (dùng chung cho luyện tập và thi thử)
+   ============================================================ */
+function hienKetQua(e, kq, tuyChon) {
+  hienNav(e.loai === 'thi' ? 'thi' : 'luyen');
+  const ti = e.diem / (e.toiDa || 10);
+  const xepLoai = ti >= .8 ? 'Rất tốt!' : ti >= .65 ? 'Khá tốt, cố gắng thêm nhé.' : ti >= .5 ? 'Đạt yêu cầu, hãy ôn lại các câu sai.' : 'Cần ôn thêm, đừng nản chí!';
+  const boLoc = { v: 'sai' };
+  const dsXem = h('div');
+  const veXem = () => {
+    const muc = kq.filter(x => boLoc.v === 'tat' || !dungCau(x.q, x.chon));
+    dsXem.replaceChildren(...(muc.length ? muc.map(x => {
+      const lamDung = dungCau(x.q, x.chon), bo = x.chon == null;
+      return h('div', { class: 'xem-lai ' + (bo ? 'bo' : lamDung ? 'dung' : 'sai') },
+        h('div', { class: 'meta' }, `${x.q.mon} · ${x.q.chuDe}`),
+        h('div', { class: 'cau-nd', style: 'font-size:1rem' }, vb(x.q.nd)), hinhQ(x.q, true),
+        h('div', null, bo ? h('span', { class: 'tem sai' }, 'Chưa làm') : h('span', { class: 'tem ' + (lamDung ? 'dung' : 'sai') }, (laDien(x.q) ? 'Bạn điền: ' : 'Bạn chọn: '), vb(chonText(x.q, x.chon)))),
+        h('div', { style: 'margin-top:4px' }, h('span', { class: 'tem dung' }, 'Đáp án đúng: ', vb(dungText(x.q)))),
+        x.q.giaiThich ? h('div', { class: 'giai-thich' }, h('b', null, 'Giải thích: '), vb(x.q.giaiThich)) : null, giaiHinhQ(x.q));
+    }) : [h('div', { class: 'trong' }, 'Không có câu nào để hiển thị. Tuyệt vời!')]));
+  };
+  const lọc = h('select', { onchange: ev => { boLoc.v = ev.target.value; veXem(); }, style: 'width:auto' },
+    h('option', { value: 'sai' }, 'Chỉ câu sai / bỏ trống'), h('option', { value: 'tat' }, 'Tất cả các câu'));
+  dat(
+    tieuDe(e.loai === 'thi' ? 'Kết quả thi thử' : 'Kết quả luyện tập', tuyChon.hetGio ? 'Đã hết giờ, bài làm được nộp tự động.' : null),
+    h('div', { class: 'the' },
+      h('div', { class: 'hang' },
+        h('div', null, h('div', { class: 'diem-lon' }, soVN(e.diem), h('small', null, ' / ' + (e.toiDa || 10))), h('p', { class: 'meta' }, xepLoai)),
+        h('div', { class: 'co-gian' }),
+        h('div', null, h('p', null, h('b', null, `${e.dung}/${e.tong}`), ' câu đúng'), h('p', { class: 'meta' }, 'Thời gian: ' + mmss(e.giay)))),
+      Object.keys(e.theoMon).length > 1 ? h('div', { style: 'margin-top:12px' }, Object.entries(e.theoMon).map(([m, v]) => thanhTienDo(m, v.dung, v.tong))) : null),
+    h('div', { class: 'hang', style: 'margin-bottom:16px' },
+      h('button', { class: 'btn', onclick: tuyChon.lamLai }, e.loai === 'thi' ? 'Thi lại' : 'Luyện tiếp'),
+      h('button', { class: 'btn vien', onclick: () => di('thongke') }, 'Xem thống kê'),
+      h('button', { class: 'btn vien', onclick: () => di('trangchu') }, 'Về trang chủ')),
+    h('div', { class: 'the' }, h('div', { class: 'hang giua', style: 'margin-bottom:14px' }, h('h2', { style: 'font-size:1.1rem' }, 'Xem lại bài làm'), lọc), dsXem));
+  veXem();
+}
+function thanhTienDo(ten, dung, tong) {
+  const pt = tong ? Math.round(dung / tong * 100) : 0;
+  return h('div', { class: 'thanh' }, h('span', null, ten), h('div', { class: 'nen' }, h('i', { style: `width:${pt}%` })), h('output', null, `${dung}/${tong} (${pt}%)`));
+}
+
+/* ============================================================
+   Thống kê
+   ============================================================ */
+function thongKe() {
+  const ls = doc(KHOA.lichSu, []), tk = doc(KHOA.thongKe, {}), nk = doc(KHOA.ngay, {});
+  if (!ls.length && !Object.keys(nk).length) return dat(tieuDe('Thống kê'), h('div', { class: 'the trong' }, 'Chưa có dữ liệu. Hãy làm một bài luyện tập hoặc thi thử trước nhé.'));
+  // 14 ngày gần nhất: số câu làm mỗi ngày, cột đậm là ngày đạt mục tiêu
+  const ngay14 = [];
+  for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); ngay14.push({ d, k: khoaNgay(d), c: nk[khoaNgay(d)]?.c || 0 }); }
+  const cao14 = Math.max(mucTieu(), ...ngay14.map(x => x.c)), tongTuan = ngay14.slice(-7).reduce((a, x) => a + x.c, 0);
+  const thi = ls.filter(x => x.loai === 'thi');
+  const cao = thi.length ? Math.max(...thi.map(diemQuyDoi)) : null;
+  const tong = ls.reduce((a, x) => a + x.tong, 0), dung = ls.reduce((a, x) => a + x.dung, 0);
+  const gan = ls.slice(-15);
+  // Tỉ lệ đúng theo môn (hoặc theo chủ đề nếu chỉ có một môn) dựa trên các câu còn trong ngân hàng
+  const theoMon = {}, mot = motMon();
+  tatCaCau().forEach(q => { const o = tk[q.id]; if (!o) return; const k = nhomCua(q, mot); const m = theoMon[k] || (theoMon[k] = { dung: 0, tong: 0 }); m.dung += o.d; m.tong += o.d + o.s; });
+  dat(
+    tieuDe('Thống kê', 'Theo dõi tiến bộ qua từng lần làm bài.'),
+    h('div', { class: 'luoi' },
+      h('div', { class: 'so-lieu' }, h('b', null, ls.length), h('span', null, 'lượt làm bài')),
+      h('div', { class: 'so-lieu' }, h('b', null, tong ? Math.round(dung / tong * 100) + '%' : '–'), h('span', null, `tỉ lệ đúng (${dung}/${tong} câu)`)),
+      h('div', { class: 'so-lieu' }, h('b', null, thi.length ? soVN(thi.reduce((a, x) => a + diemQuyDoi(x), 0) / thi.length) : '–'), h('span', null, `điểm TB thi thử (thang ${thangDiem()})`)),
+      h('div', { class: 'so-lieu' }, h('b', null, cao == null ? '–' : soVN(cao)), h('span', null, 'điểm thi thử cao nhất'))),
+    h('div', { style: 'height:16px' }),
+    h('div', { class: 'the' },
+      h('h2', { style: 'font-size:1.05rem;margin-bottom:4px' }, 'Số câu làm mỗi ngày (14 ngày gần nhất)'),
+      h('p', { class: 'meta', style: 'margin:0 0 14px' }, `7 ngày qua: ${tongTuan} câu · chuỗi hiện tại: ${chuoiNgay()} ngày · mục tiêu ${mucTieu()} câu mỗi ngày`),
+      h('div', { class: 'bieu-do' }, ngay14.map(x => h('div', { class: 'cot' + (datMucTieu(nk, x.k) ? '' : ' chua'), style: `height:${Math.max(2, x.c / cao14 * 100)}%`, title: `${x.d.toLocaleDateString('vi-VN')}: ${x.c} câu${nk[x.k] ? ` (${nk[x.k].d} đúng)` : ''}` }, x.c ? h('span', null, x.c) : null))),
+      h('div', { class: 'nhan-ngay' }, ngay14.map(x => h('span', null, x.d.getDate()))),
+      h('div', { class: 'chu-giai' }, h('span', null, h('i'), 'Đạt mục tiêu'), h('span', null, h('i', { style: 'opacity:.4' }), 'Chưa đạt'))),
+    ls.length ? h('div', { class: 'the' },
+      h('h2', { style: 'font-size:1.05rem;margin-bottom:12px' }, `Điểm ${gan.length} lượt gần nhất (% so với điểm tối đa của từng bài)`),
+      h('div', { class: 'bieu-do' }, gan.map(x => h('div', { class: 'cot' + (x.loai === 'thi' ? ' thi' : ''), style: `height:${Math.max(2, x.diem / (x.toiDa || 10) * 100)}%`, title: `${x.ten} · ${ngayGio(x.ngay)} · ${soVN(x.diem)}/${x.toiDa || 10} điểm` }, h('span', null, soVN(x.diem))))),
+      h('div', { class: 'chu-giai' }, h('span', null, h('i'), 'Luyện tập'), h('span', null, h('i', { class: 'thi' }), 'Thi thử'))) : null,
+    Object.keys(theoMon).length ? h('div', { class: 'the' }, h('h2', { style: 'font-size:1.05rem;margin-bottom:8px' }, mot ? 'Tỉ lệ đúng theo chủ đề' : 'Tỉ lệ đúng theo môn'), Object.entries(theoMon).map(([m, v]) => thanhTienDo(m, v.dung, v.tong))) : null,
+    ls.length ? h('div', { class: 'the' },
+      h('div', { class: 'hang giua', style: 'margin-bottom:8px' }, h('h2', { style: 'font-size:1.05rem' }, 'Lịch sử'),
+        h('button', { class: 'btn nguy nho', onclick: () => { if (confirm('Xóa toàn bộ lịch sử, thống kê từng câu (gồm sổ câu sai) và chuỗi ngày? Câu hỏi trong ngân hàng không bị ảnh hưởng.')) { ghi(KHOA.lichSu, []); ghi(KHOA.thongKe, {}); ghi(KHOA.ngay, {}); thongKe(); } } }, 'Xóa lịch sử')),
+      h('div', { style: 'overflow-x:auto' }, h('table', null,
+        h('thead', null, h('tr', null, ['Thời gian', 'Loại', 'Nội dung', 'Đúng', 'Điểm', 'Thời lượng'].map(t => h('th', null, t)))),
+        h('tbody', null, ls.slice().reverse().slice(0, 50).map(x => h('tr', null,
+          h('td', null, ngayGio(x.ngay)), h('td', null, h('span', { class: 'tem ' + (x.loai === 'thi' ? 'thi' : '') }, x.loai === 'thi' ? 'Thi thử' : 'Luyện tập')),
+          h('td', null, x.ten), h('td', null, `${x.dung}/${x.tong}`), h('td', null, h('b', null, soVN(x.diem))), h('td', null, mmss(x.giay)))))))) : null);
+}
+
+/* ============================================================
+   Ôn câu sai (lặp lại ngắt quãng)
+   ============================================================ */
+function onCauSai() {
+  const tk = doc(KHOA.thongKe, {});
+  const trongSoDs = tatCaCau().filter(q => trongSo(tk[q.id]));
+  const daThuoc = tatCaCau().filter(q => tk[q.id]?.s > 0 && layHop(tk[q.id]) >= HOP_CUOI).length;
+  const dueDs = trongSoDs.filter(q => denHan(tk[q.id]));
+  const trang = { loc: '', hien: 30 };
+  const danhSach = h('div');
+  const dinhDang = k => { const [y, m, d] = k.split('-'); return `${d}/${m}`; };
+  const selMon = h('select', { onchange: e => { trang.loc = e.target.value; trang.hien = 30; ve(); } },
+    h('option', { value: '' }, 'Tất cả ' + (motMon() ? 'chủ đề' : 'môn')),
+    [...new Set(trongSoDs.map(q => nhomCua(q, motMon())))].map(m => h('option', { value: m }, m)));
+  const ve = () => {
+    const ds = trongSoDs.filter(q => !trang.loc || nhomCua(q, motMon()) === trang.loc)
+      .sort((a, b) => (denHan(tk[b.id]) - denHan(tk[a.id])) || (tk[b.id].s - tk[a.id].s));
+    thay(danhSach, ds.length ? ds.slice(0, trang.hien).map(q => {
+      const o = tk[q.id], den = denHan(o);
+      return h('div', { class: 'dong-cau' },
+        h('div', { class: 'nd' },
+          h('div', { class: 'meta', style: 'margin:0' }, `${q.mon} · ${q.chuDe}`),
+          h('p', null, vb(q.nd)), hinhQ(q, true),
+          h('div', { style: 'margin-top:4px' },
+            h('span', { class: 'tem ' + (den ? 'sai' : '') }, den ? 'Đến hạn ôn' : 'Ôn lại ngày ' + dinhDang(o.den)), ' ',
+            h('span', { class: 'meta hop-ct' }, `Sai ${o.s} · đúng ${o.d} · hộp ${layHop(o)}/${HOP_CUOI}`)),
+          h('details', null, h('summary', null, 'Xem đáp án'),
+            h('div', { class: 'giai-thich' }, h('b', null, 'Đáp án: '), vb(dungText(q)), q.giaiThich ? ['\n', h('b', null, 'Giải thích: '), vb(q.giaiThich)] : null), giaiHinhQ(q))),
+        h('button', { class: 'btn vien nho', title: 'Bỏ câu này khỏi sổ vì bạn đã thuộc', onclick: () => {
+          const t = doc(KHOA.thongKe, {}); const x = t[q.id]; if (!x) return;
+          x.h = HOP_CUOI; x.den = congNgay(KHOANG[HOP_CUOI]); ghi(KHOA.thongKe, t); onCauSai(); thongBao('Đã bỏ câu khỏi sổ câu sai.');
+        } }, 'Đã thuộc'));
+    }) : h('div', { class: 'trong' }, 'Không có câu nào.'),
+      ds.length > trang.hien ? h('div', { style: 'text-align:center;padding-top:12px' }, h('button', { class: 'btn vien', onclick: () => { trang.hien += 30; ve(); } }, `Xem thêm (${ds.length - trang.hien} câu)`)) : null);
+  };
+  const bat = (dsCau, ten) => () => phienLuyen(xao(dsCau).slice(0, 20).map(xaoDapAn), ten);
+  dat(
+    tieuDe('Ôn câu sai', `Câu làm sai tự vào sổ và được nhắc lại sau ${KHOANG.slice(1).join(', ')} ngày. Trả lời đúng khi đến hạn thì lên một hộp; lên hộp cuối (${HOP_CUOI}/${HOP_CUOI}) là đã thuộc và rời sổ. Làm sai thì quay về hộp 0.`),
+    h('div', { class: 'luoi' },
+      h('div', { class: 'so-lieu' }, h('b', null, dueDs.length), h('span', null, 'câu đến hạn ôn hôm nay')),
+      h('div', { class: 'so-lieu' }, h('b', null, trongSoDs.length), h('span', null, 'câu đang trong sổ')),
+      h('div', { class: 'so-lieu' }, h('b', null, daThuoc), h('span', null, 'câu đã thuộc'))),
+    h('div', { style: 'height:16px' }),
+    trongSoDs.length ? [
+      h('div', { class: 'hang', style: 'margin-bottom:16px' },
+        h('button', { class: 'btn', disabled: !dueDs.length, onclick: bat(dueDs, 'Ôn câu sai') }, dueDs.length ? `Ôn ${Math.min(20, dueDs.length)} câu đến hạn` : 'Hôm nay không còn câu nào đến hạn'),
+        h('button', { class: 'btn vien', onclick: bat(trongSoDs, 'Ôn câu sai') }, `Ôn cả sổ (tối đa 20 câu)`)),
+      h('div', { class: 'the' }, h('div', { class: 'hang giua', style: 'margin-bottom:10px' }, h('h2', { style: 'font-size:1.05rem' }, 'Sổ câu sai'), selMon), danhSach)]
+      : h('div', { class: 'the trong' }, 'Sổ câu sai đang trống. Câu nào bạn làm sai khi luyện tập hoặc thi thử sẽ tự được ghi vào đây.'));
+  if (trongSoDs.length) ve();
+}
+
+/* ============================================================
+   Ngân hàng đề
+   ============================================================ */
+function nganHang() {
+  const trang = { loc: '', tim: '', hien: 30 };
+  const danhSach = h('div'), dem = h('p', { class: 'meta' });
+  const selMon = h('select', { onchange: e => { trang.loc = e.target.value; trang.hien = 30; ve(); } },
+    h('option', { value: '' }, 'Tất cả các môn'), dsMon().map(m => h('option', { value: m }, m)));
+  const inTim = h('input', { type: 'text', placeholder: 'Tìm trong câu hỏi…', oninput: e => { trang.tim = boDau(e.target.value); trang.hien = 30; ve(); } });
+  const anMau = caiDat().anMau;
+  const ve = () => {
+    const ds = tatCaCau().filter(q => (!trang.loc || q.mon === trang.loc) && (!trang.tim || boDau(q.nd).includes(trang.tim)));
+    dem.textContent = `${ds.length} câu hiển thị · tổng ${tatCaCau().length} câu (${cauNguoiDung().length} câu do bạn nhập).`;
+    thay(danhSach, ...(ds.length ? ds.slice(0, trang.hien).map(q => h('div', { class: 'dong-cau' },
+      h('div', { class: 'nd' }, h('div', { class: 'meta', style: 'margin:0' }, `${q.mon} · ${q.chuDe}${laDien(q) ? ' · Điền đáp án' : ''}${q.nguon ? ' · ' + q.nguon : ''}`), h('p', null, vb(q.nd)), hinhQ(q, true)),
+      q.mau ? h('span', { class: 'tem' }, 'Mẫu') : h('div', { class: 'hang', style: 'flex:none;flex-wrap:nowrap;gap:6px' },
+        h('button', { class: 'btn vien nho', 'aria-label': 'Sửa câu hỏi', onclick: () => hopThoaiThem(q) }, 'Sửa'),
+        h('button', { class: 'btn nguy nho', 'aria-label': 'Xóa câu hỏi', onclick: () => {
+          if (!confirm('Xóa câu hỏi này?')) return;
+          ghi(KHOA.cauHoi, cauNguoiDung().filter(x => x.id !== q.id)); ve();
+        } }, 'Xóa')))) : [h('div', { class: 'trong' }, 'Không có câu hỏi nào.')]),
+      ds.length > trang.hien ? h('div', { style: 'text-align:center;padding-top:12px' }, h('button', { class: 'btn vien', onclick: () => { trang.hien += 30; ve(); } }, `Xem thêm (${ds.length - trang.hien} câu)`)) : null);
+  };
+  dat(
+    tieuDe('Ngân hàng đề', 'Nhập câu hỏi từ tài liệu của bạn hoặc thêm từng câu.'),
+    h('div', { class: 'the' },
+      h('div', { class: 'hang' },
+        h('button', { class: 'btn', onclick: () => hopThoaiNhap() }, 'Nhập từ file (Excel, Word, văn bản)'),
+        h('button', { class: 'btn vien', onclick: () => hopThoaiThem() }, 'Thêm một câu'),
+        h('button', { class: 'btn vien', onclick: taiFileMau }, 'Tải file Excel mẫu')),
+      h('div', { class: 'hang', style: 'margin-top:10px' },
+        h('button', { class: 'btn vien nho', onclick: xuatNganHang }, 'Xuất ngân hàng (JSON)'),
+        h('button', { class: 'btn vien nho', onclick: () => { ghi(KHOA.cai, { ...caiDat(), anMau: !anMau }); nganHang(); } }, anMau ? 'Hiện lại câu mẫu' : 'Ẩn câu mẫu'))),
+    h('div', { class: 'the' }, h('div', { class: 'hai-cot' }, selMon, inTim), dem, danhSach));
+  ve();
+}
+
+function xuatNganHang() {
+  const ds = cauNguoiDung();
+  if (!ds.length) return thongBao('Chưa có câu hỏi nào do bạn nhập để xuất.');
+  taiXuong(`luyen-thi-${boDe}-ngan-hang.json`, new Blob([JSON.stringify({ cauHoi: ds }, null, 1)], { type: 'application/json' }));
+}
+
+const TIEU_DE_MAU = ['Môn', 'Chủ đề', 'Câu hỏi', 'A', 'B', 'C', 'D', 'Đáp án', 'Giải thích'];
+const HANG_MAU = [
+  ['Toán', 'Phân số', '3/4 + 1/6 = ?', '4/10', '11/12', '5/12', '1/2', 'B', 'Quy đồng mẫu số 12: 9/12 + 2/12 = 11/12.'],
+  ['Tiếng Anh', 'Ngữ pháp', 'She ___ to school every day.', 'go', 'goes', 'going', 'gone', 'B', 'Chủ ngữ ngôi thứ ba số ít nên thêm -es.']
+];
+async function taiFileMau() {
+  try {
+    const X = await taiThuVien('xlsx');
+    const ws = X.utils.aoa_to_sheet([TIEU_DE_MAU, ...HANG_MAU]);
+    ws['!cols'] = [12, 16, 48, 18, 18, 18, 18, 9, 48].map(wch => ({ wch }));
+    const wb = X.utils.book_new(); X.utils.book_append_sheet(wb, ws, 'CauHoi');
+    X.writeFile(wb, 'mau-cau-hoi-luyen-thi-clc.xlsx');
+  } catch (err) {   // không có mạng: xuất CSV (có BOM để Excel đọc đúng tiếng Việt)
+    const csv = '﻿' + [TIEU_DE_MAU, ...HANG_MAU].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+    taiXuong('mau-cau-hoi-luyen-thi-clc.csv', new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    thongBao('Không tải được thư viện Excel nên đã xuất file CSV mẫu.');
+  }
+}
+
+/* ---------- Đọc file đề ---------- */
+const TEN_COT = {
+  mon: ['mon', 'mon hoc'],
+  chuDe: ['chu de', 'chuyen de', 'dang'],
+  nd: ['cau hoi', 'noi dung', 'de bai', 'cau'],
+  dung: ['dap an', 'dap an dung', 'dung', 'key'],
+  giaiThich: ['giai thich', 'loi giai', 'huong dan', 'huong dan giai'],
+  hinh: ['hinh', 'hinh anh', 'anh', 'image', 'link hinh']      // địa chỉ ảnh http(s); không dán được ảnh vào ô Excel
+};
+function anhXaCot(hang) {
+  const cot = { opts: {} };
+  hang.forEach((t, c) => {
+    const k = boDau(t); if (!k) return;
+    const m = /^(?:dap an |phuong an |lua chon )?([a-e])$/.exec(k);
+    if (m) { cot.opts[m[1].toUpperCase()] = c; return; }
+    for (const [ten, ds] of Object.entries(TEN_COT)) if (ds.includes(k) && cot[ten] == null) cot[ten] = c;
+  });
+  return cot;
+}
+function phanTichBang(hang, tenBang) {
+  const ds = [], loi = [];
+  let tieuDeIdx = hang.findIndex(r => anhXaCot(r).nd != null);
+  if (tieuDeIdx < 0) return { ds, loi: [`Sheet "${tenBang}": không tìm thấy dòng tiêu đề có cột "Câu hỏi".`] };
+  const cot = anhXaCot(hang[tieuDeIdx]);
+  if (cot.dung == null) return { ds, loi: [`Sheet "${tenBang}": cần có cột "Đáp án" (và các cột A, B, C, D nếu là câu trắc nghiệm).`] };
+  for (let r = tieuDeIdx + 1; r < hang.length; r++) {
+    const row = hang[r], o = c => (c == null ? '' : String(row[c] ?? '').trim());
+    const nd = o(cot.nd); if (!nd) continue;
+    const nhan = `Sheet "${tenBang}" dòng ${r + 1}`;
+    const luaChon = Object.entries(cot.opts).sort().map(([k, c]) => ({ k, t: o(c) })).filter(x => x.t);
+    const da = o(cot.dung); let dung = -1;
+    if (!luaChon.length) {       // không có lựa chọn nào → câu điền đáp án, cột "Đáp án" là kết quả (nhiều cách viết cách nhau bằng |)
+      if (!da) loi.push(`${nhan}: thiếu đáp án.`);
+      else ds.push({ mon: o(cot.mon), chuDe: o(cot.chuDe), nd, dapAn: [], dien: tachDien(da), giaiThich: o(cot.giaiThich), hinh: o(cot.hinh) });
+      continue;
+    }
+    if (luaChon.length < 2) { loi.push(`${nhan}: cần ít nhất 2 lựa chọn.`); continue; }
+    const mc = /^([A-E])(?:\s*[\.\)\-:]|$)/i.exec(da);
+    if (mc) dung = luaChon.findIndex(x => x.k === mc[1].toUpperCase());
+    else {                       // khớp nội dung trước (đáp án "4" có thể chính là chữ "4"), rồi mới tính là số thứ tự
+      dung = luaChon.findIndex(x => boDau(x.t) === boDau(da));
+      if (dung < 0 && /^[1-5]$/.test(da)) dung = Number(da) - 1;
+    }
+    if (dung < 0 || dung >= luaChon.length) { loi.push(`${nhan}: đáp án "${da}" không khớp lựa chọn nào.`); continue; }
+    ds.push({ mon: o(cot.mon), chuDe: o(cot.chuDe), nd, dapAn: luaChon.map(x => x.t), dung, giaiThich: o(cot.giaiThich), hinh: o(cot.hinh) });
+  }
+  return { ds, loi };
+}
+
+// Các từ khóa chấp nhận cả dạng không dấu (PDF/văn bản xuất từ phần mềm cũ hay mất dấu tiếng Việt)
+const RE_MON = /^\s*(?:môn|mon)(?:\s*học|\s*hoc)?\s*[:：]\s*(.+?)\s*$/i;
+const RE_CHUDE = /^\s*(?:chủ\s*đề|chu\s*de|chuyên\s*đề|chuyen\s*de)\s*[:：]\s*(.+?)\s*$/i;
+const RE_CAU = /^\s*(?:(?:câu|cau|bài|bai)\s*(\d{1,3})\s*[\.\):\-]?\s*|(\d{1,3})[\.\)]\s+)(.*)$/i;
+const RE_DAPAN = /^\s*(?:(?:đáp|dap)\s*(?:án|an)(?:\s*đúng|\s*dung)?\s*[:：\.\-]?|(?:đ\/a|d\/a|đa|answer|key)\s*[:：])\s*([A-Ea-e])(?![A-Za-zÀ-ỹ])/i;
+const RE_DAPAN_DIEN = /^\s*(?:(?:đáp|dap)\s*(?:án|an)(?:\s*đúng|\s*dung)?|đ\/a|d\/a|answer)\s*[:：]\s*(\S.*)$/i;
+const RE_GIAITHICH =/^\s*(?:giải\s*thích|giai\s*thich|hướng\s*dẫn\s*giải|huong\s*dan\s*giai|hướng\s*dẫn|huong\s*dan|lời\s*giải|loi\s*giai)\s*[:：]\s*(.*)$/i;
+
+function tachLuaChon(dong) {
+  const dau = /^\s*(\*?)\s*([A-E])\s*[\.\):]\s*/.exec(dong);
+  if (!dau) return null;
+  const kq = []; let k = dau[2], sao = !!dau[1], rest = dong.slice(dau[0].length);
+  for (;;) {                    // cho phép nhiều lựa chọn trên cùng một dòng: "A. 3  B. 4  C. 5"
+    const tiep = String.fromCharCode(k.charCodeAt(0) + 1);
+    const m = tiep <= 'E' ? new RegExp('\\s(\\*?)\\s*' + tiep + '\\s*[\\.\\):]\\s+').exec(rest) : null;
+    if (!m) { kq.push({ k, sao, t: rest.trim() }); break; }
+    kq.push({ k, sao, t: rest.slice(0, m.index).trim() });
+    sao = !!m[1]; k = tiep; rest = rest.slice(m.index + m[0].length);
+  }
+  return kq;
+}
+
+// Nhiều đề (nhất là PDF) có "BẢNG ĐÁP ÁN" gom ở cuối: "1.A 2.B 3.C ..." hoặc mỗi dòng "Câu 1: A".
+// Tìm khối đó từ cuối tài liệu: phải có ít nhất 3 cặp số–chữ và số dòng không nhiều hơn số cặp
+// (để dòng "Đáp án: B" nằm giữa các câu không bị nhầm thành bảng).
+const RE_DAU_BANG = /^\s*(?:(?:bảng|bang)\s*)?(?:(?:đáp|dap)\s*(?:án|an)|đ\/a|d\/a)(?:\s*đúng|\s*dung)?\s*[:：]?\s*(.*)$/i;
+const RE_CAP_DAPAN = /(\d{1,3})\s*[\.\):\-–]?\s*([A-Ea-e])(?![A-Za-zÀ-ỹ0-9])/g;
+function tachBangDapAn(dong) {
+  for (let i = dong.length - 1; i >= 0; i--) {
+    const m = RE_DAU_BANG.exec(dong[i]);
+    if (!m) continue;
+    const khoi = [m[1], ...dong.slice(i + 1)].filter(l => l.trim());
+    const cap = khoi.flatMap(l => [...l.matchAll(RE_CAP_DAPAN)]);
+    if (cap.length >= 3 && khoi.length <= cap.length) {
+      const bang = {};
+      cap.forEach(c => { if (!(Number(c[1]) in bang)) bang[Number(c[1])] = c[2].toUpperCase(); });
+      return { dong: dong.slice(0, i), bang };
+    }
+  }
+  return { dong, bang: {} };
+}
+
+function phanTichVanBan(van) {
+  const { dong, bang } = tachBangDapAn(van.normalize('NFC').replace(/\r/g, '').split('\n'));
+  const ds = [], loi = [];
+  let mon = '', chuDe = '', cur = null, trangThai = '', soCuoi = 0;
+  const dong_cau = () => {
+    if (!cur) return;
+    const nd = cur.nd.trim(), nhan = `Câu ${cur.so}${nd ? ' ("' + nd.slice(0, 40) + (nd.length > 40 ? '…' : '') + '")' : ''}`;
+    if (!nd) loi.push(`Câu ${cur.so}: không có nội dung câu hỏi.`);
+    else if (!cur.opts.length && cur.dien) ds.push({ mon: cur.mon, chuDe: cur.chuDe, nd, dapAn: [], dien: tachDien(cur.dien), giaiThich: cur.gt.trim() });
+    else if (cur.opts.length < 2) loi.push(`${nhan}: cần ít nhất 2 lựa chọn (A., B., …).`);
+    else {
+      let dung = cur.dung;
+      if (dung == null) {
+        dung = cur.opts.findIndex(o => o.sao);
+        if (dung < 0 && bang[cur.so]) dung = cur.opts.findIndex(o => o.k === bang[cur.so]);
+      } else dung = cur.opts.findIndex(o => o.k === dung);
+      if (dung < 0) loi.push(`${nhan}: thiếu dòng "Đáp án: …" (hoặc bảng đáp án ở cuối tài liệu) hoặc đáp án không khớp.`);
+      else ds.push({ mon: cur.mon, chuDe: cur.chuDe, nd, dapAn: cur.opts.map(o => o.t), dung, giaiThich: cur.gt.trim() });
+    }
+    cur = null;
+  };
+  for (const raw of dong) {
+    const d = raw.trim(); if (!d) continue;
+    let m;
+    if ((m = RE_MON.exec(d))) { dong_cau(); mon = m[1]; continue; }
+    if ((m = RE_CHUDE.exec(d))) { dong_cau(); chuDe = m[1]; continue; }
+    const mq = RE_CAU.exec(d);
+    if (mq && (mq[1] != null || !cur || Number(mq[2]) === soCuoi + 1) && !(cur && trangThai === 'gt' && mq[1] == null && Number(mq[2]) !== soCuoi + 1)) {
+      dong_cau();
+      soCuoi = Number(mq[1] ?? mq[2]);
+      cur = { so: soCuoi, nd: mq[3], opts: [], dung: null, gt: '', mon, chuDe };
+      trangThai = 'nd';
+      continue;
+    }
+    if (!cur) continue;
+    // Câu chưa có lựa chọn nào mà có "Đáp án: 72" → câu điền đáp án (một chữ A–E đơn lẻ vẫn bị coi là thiếu lựa chọn)
+    if (!cur.opts.length && (m = RE_DAPAN_DIEN.exec(d)) && !/^[A-Ea-e]$/.test(m[1].trim())) { cur.dien = m[1].trim(); trangThai = 'da'; continue; }
+    if ((m = RE_DAPAN.exec(d))) { cur.dung = m[1].toUpperCase(); trangThai = 'da'; continue; }
+    if ((m = RE_GIAITHICH.exec(d))) { cur.gt = m[1]; trangThai = 'gt'; continue; }
+    const lc = trangThai !== 'gt' ? tachLuaChon(d) : null;
+    if (lc) {
+      lc.forEach(o => {
+        const bo = /\(\*\)\s*$/.test(o.t);
+        cur.opts.push({ k: o.k, sao: o.sao || bo, t: o.t.replace(/\s*\(\*\)\s*$/, '') });
+      });
+      trangThai = 'lc'; continue;
+    }
+    if (trangThai === 'nd') cur.nd += '\n' + d;
+    else if (trangThai === 'lc') cur.opts[cur.opts.length - 1].t += ' ' + d;
+    else if (trangThai === 'gt') cur.gt += '\n' + d;
+  }
+  dong_cau();
+  if (!ds.length && !loi.length) loi.push('Không nhận ra câu hỏi nào. Mỗi câu cần bắt đầu bằng "Câu 1." và có các lựa chọn A., B., C., D. cùng dòng "Đáp án: …".');
+  return { ds, loi };
+}
+
+function phanTichJson(van) {
+  const j = JSON.parse(van);
+  const mang = Array.isArray(j) ? j : j.cauHoi;
+  if (!Array.isArray(mang)) throw new Error('JSON phải là một mảng câu hỏi hoặc có khóa "cauHoi".');
+  const ds = [], loi = [];
+  mang.forEach((c, k) => {
+    const dapAn = (c.dapAn || []).map(x => String(x).trim()).filter(Boolean);
+    const dien = dapAn.length < 2 ? tachDien(c.dien) : [];
+    if (c.nd && dien.length) { ds.push({ mon: c.mon, chuDe: c.chuDe, nd: c.nd, dapAn: [], dien, giaiThich: c.giaiThich, hinh: c.hinh, giaiHinh: c.giaiHinh }); return; }
+    if (!c.nd || dapAn.length < 2 || !Number.isInteger(c.dung) || c.dung < 0 || c.dung >= dapAn.length) loi.push(`Phần tử ${k + 1}: thiếu nội dung, lựa chọn hoặc đáp án không hợp lệ.`);
+    else ds.push({ mon: c.mon, chuDe: c.chuDe, nd: c.nd, dapAn, dung: c.dung, giaiThich: c.giaiThich, hinh: c.hinh, giaiHinh: c.giaiHinh });
+  });
+  return { ds, loi };
+}
+
+// Lấy chữ từ PDF (pdf.js): gom các mẩu chữ cùng độ cao thành một dòng, từ trên xuống dưới
+const RE_SO_TRANG = /^\s*(?:trang|page)?\s*[-–]?\s*\d{1,3}\s*[-–]?(?:\s*\/\s*\d{1,3})?\s*$/i;
+async function docPdf(file) {
+  const P = await taiThuVien('pdfjs');
+  let pdf;
+  try { pdf = await P.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise; }
+  catch (err) { throw new Error('Không mở được file PDF (file hỏng hoặc đặt mật khẩu).'); }
+  const tatCa = [];
+  for (let t = 1; t <= pdf.numPages; t++) {
+    const nd = await (await pdf.getPage(t)).getTextContent();
+    const muc = nd.items.filter(i => i.str && i.str.trim()).map(i => ({ x: i.transform[4], y: i.transform[5], r: i.width || 0, s: i.str }));
+    muc.sort((a, b) => b.y - a.y || a.x - b.x);
+    const dongTrang = [];
+    let cur = null;
+    for (const m of muc) {
+      if (!cur || Math.abs(cur.y - m.y) > 3) { cur = { y: m.y, ds: [] }; dongTrang.push(cur); }
+      cur.ds.push(m);
+    }
+    const chu = dongTrang.map(d => {
+      d.ds.sort((a, b) => a.x - b.x);
+      let s = '', cuoi = null;
+      for (const m of d.ds) {
+        if (cuoi != null && m.x - cuoi > 1.5 && !s.endsWith(' ') && !m.s.startsWith(' ')) s += ' ';
+        s += m.s; cuoi = m.x + m.r;
+      }
+      return s.trim();
+    }).filter(Boolean);
+    // bỏ số trang ở đầu/cuối trang để không dính vào câu hỏi
+    if (chu.length && RE_SO_TRANG.test(chu[chu.length - 1])) chu.pop();
+    if (chu.length && RE_SO_TRANG.test(chu[0])) chu.shift();
+    tatCa.push(...chu);
+  }
+  const van = tatCa.join('\n');
+  if (van.replace(/\s/g, '').length < 20) throw new Error('PDF này là ảnh chụp/scan nên không có chữ để đọc. Hãy dùng PDF có thể bôi đen chữ, hoặc gõ lại vào Word/Excel.');
+  return van;
+}
+
+async function docFile(file) {
+  const duoi = (file.name.split('.').pop() || '').toLowerCase();
+  let kq;
+  if (['xlsx', 'xls', 'csv'].includes(duoi)) {
+    const X = await taiThuVien('xlsx');
+    const wb = duoi === 'csv' ? X.read(await file.text(), { type: 'string' }) : X.read(await file.arrayBuffer(), { type: 'array' });
+    kq = { ds: [], loi: [] };
+    wb.SheetNames.forEach(ten => {
+      const r = phanTichBang(X.utils.sheet_to_json(wb.Sheets[ten], { header: 1, raw: false, defval: '' }), ten);
+      kq.ds.push(...r.ds); kq.loi.push(...r.loi);
+    });
+  } else if (duoi === 'docx') {
+    const M = await taiThuVien('mammoth');
+    kq = phanTichVanBan((await M.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value);
+  } else if (['txt', 'md'].includes(duoi)) {
+    kq = phanTichVanBan(await file.text());
+  } else if (duoi === 'json') {
+    kq = phanTichJson(await file.text());
+  } else if (duoi === 'pdf') {
+    kq = phanTichVanBan(await docPdf(file));
+    if (!kq.ds.length) kq.loi.push('Nếu file PDF chia hai cột hoặc có bảng, chữ có thể bị trộn lẫn khi đọc. Hãy thử xuất file sang Word (.docx) hoặc Excel rồi nhập lại.');
+  } else if (duoi === 'doc') {
+    throw new Error('File .doc cũ chưa được hỗ trợ. Hãy lưu lại thành .docx.');
+  } else throw new Error('Định dạng .' + duoi + ' chưa được hỗ trợ.');
+  kq.ds.forEach(c => { c.nguon = file.name; });
+  return kq;
+}
+
+/* ---------- Hộp thoại ---------- */
+function moHop(...noiDung) {
+  const hop = h('dialog', null, h('div', { class: 'noi-dung' }, noiDung));
+  hop.addEventListener('close', () => hop.remove());
+  document.body.append(hop); hop.showModal();
+  return hop;
+}
+
+const MAU_VAN_BAN =
+`Môn: Toán
+Chủ đề: Phân số
+Câu 1. 3/4 + 1/6 = ?
+A. 4/10
+B. 11/12
+C. 5/12
+D. 1/2
+Đáp án: B
+Giải thích: Quy đồng mẫu số 12 rồi cộng.
+
+Câu 2. Từ nào là danh từ?
+A. chạy  B. học sinh  C. nhanh  D. đẹp
+Đáp án: B`;
+
+function hopThoaiNhap() {
+  const inFile = h('input', { type: 'file', multiple: true, accept: '.xlsx,.xls,.csv,.docx,.pdf,.txt,.md,.json' });
+  const inMon = h('input', { type: 'text', placeholder: 'Ví dụ: Toán' });
+  const inDe = h('input', { type: 'text', placeholder: 'Để trống = "Chung"' });
+  const xem = h('div'); const nutThem = h('button', { class: 'btn', disabled: true }, 'Thêm vào ngân hàng');
+  let tichLuy = [];
+  const hop = moHop(
+    h('h2', { style: 'font-size:1.2rem;margin-bottom:10px' }, 'Nhập câu hỏi từ file'),
+    h('p', { class: 'meta' }, 'Hỗ trợ Excel (.xlsx, .xls, .csv), Word (.docx), PDF (.pdf), văn bản (.txt, .md) và JSON đã xuất từ app. Có thể chọn nhiều file cùng lúc. Các file được đọc ngay trên máy bạn, không gửi đi đâu.'),
+    h('details', null, h('summary', null, 'Excel cần định dạng thế nào?'),
+      h('p', { class: 'meta' }, 'Dòng đầu là tiêu đề: Môn | Chủ đề | Câu hỏi | A | B | C | D | Đáp án | Giải thích. Cột "Đáp án" ghi A/B/C/D (hoặc 1–4, hoặc chính nội dung đáp án). Các cột Môn, Chủ đề, Giải thích có thể bỏ trống. Câu điền đáp án: để trống các cột A–D và ghi kết quả vào cột "Đáp án" (nhiều cách viết đúng thì cách nhau bằng dấu |). Cột "Hình" (tùy chọn) là địa chỉ ảnh https://… của hình minh hoạ. Công thức toán viết kiểu LaTeX giữa hai dấu $, ví dụ $\\frac{3}{4}$ hoặc $x^2$, sẽ được hiển thị đẹp (cần mạng lần đầu để tải KaTeX).'),
+      h('button', { class: 'btn vien nho', onclick: taiFileMau }, 'Tải file Excel mẫu')),
+    h('details', null, h('summary', null, 'Word / PDF / văn bản cần định dạng thế nào?'),
+      h('p', { class: 'meta' }, 'Mỗi câu bắt đầu bằng "Câu 1.", các lựa chọn A. B. C. D. (mỗi dòng một lựa chọn hoặc cùng một dòng), kèm dòng "Đáp án: B" (hoặc một bảng đáp án ở cuối tài liệu dạng "1.A 2.B 3.C …"). Dòng "Môn:" và "Chủ đề:" áp dụng cho các câu phía sau. Có thể đánh dấu đáp án đúng bằng dấu * trước lựa chọn thay cho dòng Đáp án. Câu điền đáp án: không ghi lựa chọn, chỉ ghi "Đáp án: 72" ngay dưới câu hỏi.'),
+      h('pre', { class: 'mau' }, MAU_VAN_BAN)),
+    h('div', { style: 'height:10px' }),
+    truong('Chọn file', inFile),
+    h('div', { class: 'hai-cot' }, truong('Môn mặc định', inMon, 'Dùng cho câu chưa ghi môn.'), truong('Chủ đề mặc định', inDe)),
+    xem,
+    h('div', { class: 'hang', style: 'justify-content:flex-end;margin-top:14px' },
+      h('button', { class: 'btn vien', onclick: () => hop.close() }, 'Đóng'), nutThem));
+
+  const veXem = () => {
+    const tong = tichLuy.reduce((a, f) => a + f.ds.length, 0);
+    xem.replaceChildren(...tichLuy.map(f => h('div', { style: 'margin:8px 0' },
+      h('b', null, f.ten), ' ',
+      f.loiTai ? h('span', { class: 'tem sai' }, 'Không đọc được') : [h('span', { class: 'tem dung' }, f.ds.length + ' câu hợp lệ'), ' ', f.loi.length ? h('span', { class: 'tem sai' }, f.loi.length + ' lỗi') : null],
+      f.loiTai ? h('ul', { class: 'loi' }, h('li', null, f.loiTai)) : null,
+      f.loi.length ? h('details', null, h('summary', null, 'Xem lỗi'), h('ul', { class: 'loi' }, f.loi.slice(0, 40).map(l => h('li', null, l)), f.loi.length > 40 ? h('li', null, `… và ${f.loi.length - 40} lỗi khác`) : null)) : null)));
+    nutThem.disabled = !tong; nutThem.textContent = tong ? `Thêm ${tong} câu vào ngân hàng` : 'Thêm vào ngân hàng';
+  };
+  inFile.addEventListener('change', async () => {
+    tichLuy = []; xem.replaceChildren(h('p', { class: 'meta' }, 'Đang đọc file…'));
+    for (const f of inFile.files) {
+      try { const r = await docFile(f); tichLuy.push({ ten: f.name, ds: r.ds, loi: r.loi }); }
+      catch (err) { tichLuy.push({ ten: f.name, ds: [], loi: [], loiTai: err.message || String(err) }); }
+    }
+    veXem();
+  });
+  nutThem.addEventListener('click', () => {
+    const hien = cauNguoiDung(), co = new Set(cauMau().concat(hien).map(khoaTrung));
+    const viTri = new Map(hien.map((x, i) => [khoaTrung(x), i]));
+    let them = 0, trung = 0, boSung = 0;
+    tichLuy.forEach(f => f.ds.forEach(c => {
+      const q = chuanHoaCau({ ...c, mon: c.mon || inMon.value, chuDe: c.chuDe && c.chuDe !== 'Chung' ? c.chuDe : (inDe.value || c.chuDe) });
+      q.mon = q.mon || BO_DE[boDe].monMacDinh || 'Khác';
+      const k = khoaTrung(q);
+      if (co.has(k)) {
+        trung++;
+        // Câu trùng nhưng bản nhập vào có hình/giải thích mà câu đã lưu chưa có (ví dụ nhập lại bộ đề sau khi đã trích được hình và lời giải): bổ sung vào câu đã lưu
+        const i = viTri.get(k);
+        if (i != null) {
+          let them_ = false;
+          if (q.hinh && !hien[i].hinh) { hien[i].hinh = q.hinh; them_ = true; }
+          if (q.giaiThich && !hien[i].giaiThich) { hien[i].giaiThich = q.giaiThich; them_ = true; }
+          if (q.giaiHinh && !hien[i].giaiHinh) { hien[i].giaiHinh = q.giaiHinh; them_ = true; }
+          if (them_) boSung++;
+        }
+        return;
+      }
+      co.add(k); viTri.set(k, hien.length); hien.push(q); them++;
+    }));
+    if (!ghi(KHOA.cauHoi, hien)) return void thongBao('Không lưu được: bộ nhớ trình duyệt đã đầy (hình làm tăng dung lượng). Hãy xóa bớt câu cũ rồi thử lại.');
+    hop.close(); nganHang();
+    thongBao(`Đã thêm ${them} câu${boSung ? `, bổ sung hình/giải thích cho ${boSung} câu đã có` : ''}${trung - boSung ? `, bỏ qua ${trung - boSung} câu trùng` : ''}.`);
+  });
+}
+
+// Thêm câu mới, hoặc sửa một câu do người dùng nhập (sua = câu đó; giữ nguyên id nên thống kê và sổ câu sai không mất)
+function hopThoaiThem(sua) {
+  const inMon = h('input', { type: 'text', list: 'ds-mon', placeholder: 'Ví dụ: Toán', value: sua?.mon });
+  const inDe = h('input', { type: 'text', placeholder: boDe === 'clc' ? 'Ví dụ: Phân số, hoặc đề của trường: Cầu Giấy 2023–2024' : 'Ví dụ: Phân số', value: sua?.chuDe });
+  const inNd = h('textarea', { placeholder: 'Nội dung câu hỏi. Công thức viết giữa hai dấu $, ví dụ $\\frac{3}{4}$', value: sua?.nd });
+  const inLc = [0, 1, 2, 3, 4].map(k => h('input', { type: 'text', placeholder: 'Lựa chọn ' + CHU_CAI[k] + (k === 4 ? ' (không bắt buộc)' : ''), value: sua && !laDien(sua) ? sua.dapAn[k] : '' }));
+  const selDung = h('select', null, [0, 1, 2, 3, 4].map(k => h('option', { value: k }, CHU_CAI[k])));
+  if (sua && !laDien(sua)) selDung.value = String(sua.dung);
+  const selLoai = h('select', { onchange: () => doiLoai() }, h('option', { value: 'tn' }, 'Trắc nghiệm (chọn A–E)'), h('option', { value: 'dien' }, 'Điền đáp án (gõ kết quả)'));
+  if (sua && laDien(sua)) selLoai.value = 'dien';
+  const inDien = h('input', { type: 'text', placeholder: 'Ví dụ: 72   hoặc   3/4 | 0,75', value: sua && laDien(sua) ? sua.dien.join(' | ') : '' });
+  const vungTn = h('div', null, inLc.map((i, k) => truong('Lựa chọn ' + CHU_CAI[k], i)), truong('Đáp án đúng', selDung));
+  const vungDien = h('div', { style: 'display:none' }, truong('Đáp án đúng', inDien, 'Có nhiều cách viết đúng thì cách nhau bằng dấu |. Số thập phân dùng dấu , hay . đều được.'));
+  const doiLoai = () => { const dien = selLoai.value === 'dien'; vungTn.style.display = dien ? 'none' : ''; vungDien.style.display = dien ? '' : 'none'; };
+  doiLoai();
+  const inGt = h('textarea', { placeholder: 'Giải thích (không bắt buộc)', style: 'min-height:60px', value: sua?.giaiThich });
+  const loi = h('p', { style: 'color:var(--sai);margin:0 0 8px' });
+
+  let hinh = hinhHopLe(sua?.hinh) ? sua.hinh : '';
+  const vungHinh = h('div');
+  const veHinh = () => thay(vungHinh, hinh ? h('div', { class: 'xem-hinh' },
+    h('img', { src: hinh, alt: 'Hình đã chọn' }), h('button', { class: 'btn nguy nho', onclick: () => { hinh = ''; veHinh(); } }, 'Bỏ hình')) : null);
+  const nhanAnh = async file => {
+    try { hinh = await docAnh(file); loi.textContent = ''; veHinh(); }
+    catch (err) { loi.textContent = err.message || 'Không đọc được ảnh này.'; }
+  };
+  const inAnh = h('input', { type: 'file', accept: 'image/png,image/jpeg,image/gif,image/webp', onchange: () => { if (inAnh.files[0]) nhanAnh(inAnh.files[0]); inAnh.value = ''; } });
+  veHinh();
+
+  const hop = moHop(
+    h('h2', { style: 'font-size:1.2rem;margin-bottom:12px' }, sua ? 'Sửa câu hỏi' : 'Thêm câu hỏi'),
+    h('datalist', { id: 'ds-mon' }, dsMon().map(m => h('option', { value: m }))),
+    h('div', { class: 'hai-cot' }, truong('Môn', inMon), truong('Chủ đề', inDe)),
+    truong('Dạng câu hỏi', selLoai),
+    truong('Câu hỏi', inNd),
+    truong('Hình minh hoạ (không bắt buộc)', inAnh, 'Chọn ảnh, hoặc bấm Ctrl+V để dán ảnh đã chụp/sao chép. Ảnh được thu nhỏ và lưu ngay trong trình duyệt.'),
+    vungHinh,
+    vungTn, vungDien,
+    truong('Giải thích', inGt), loi,
+    h('div', { class: 'hang', style: 'justify-content:flex-end' },
+      h('button', { class: 'btn vien', onclick: () => hop.close() }, 'Hủy'),
+      h('button', { class: 'btn', onclick: () => {
+        const dien = selLoai.value === 'dien';
+        const dapAn = inLc.map(i => i.value.trim());
+        const dung = Number(selDung.value);
+        if (!inNd.value.trim()) return void (loi.textContent = 'Hãy nhập nội dung câu hỏi.');
+        let q;
+        if (dien) {
+          if (!tachDien(inDien.value).length) return void (loi.textContent = 'Hãy nhập đáp án đúng.');
+          q = chuanHoaCau({ mon: inMon.value || BO_DE[boDe].monMacDinh || 'Khác', chuDe: inDe.value, nd: inNd.value, dapAn: [], dien: inDien.value, giaiThich: inGt.value, hinh });
+        } else {
+          if (dapAn.filter(Boolean).length < 2) return void (loi.textContent = 'Cần ít nhất 2 lựa chọn.');
+          if (!dapAn[dung]) return void (loi.textContent = 'Đáp án đúng đang trỏ vào lựa chọn bị bỏ trống.');
+          const dungMoi = dapAn.slice(0, dung).filter(Boolean).length;   // vị trí sau khi bỏ lựa chọn trống
+          q = chuanHoaCau({ mon: inMon.value || BO_DE[boDe].monMacDinh || 'Khác', chuDe: inDe.value, nd: inNd.value, dapAn, dung: dungMoi, giaiThich: inGt.value, hinh });
+        }
+        if (tatCaCau().some(x => x.id !== sua?.id && khoaTrung(x) === khoaTrung(q))) return void (loi.textContent = 'Câu hỏi này đã có trong ngân hàng.');
+        const ds = cauNguoiDung();
+        const ok = sua ? ghi(KHOA.cauHoi, ds.map(x => x.id === sua.id ? { ...q, id: sua.id, nguon: sua.nguon || 'Nhập tay', ...(sua.giaiHinh ? { giaiHinh: sua.giaiHinh } : {}) } : x))
+                       : ghi(KHOA.cauHoi, ds.concat({ ...q, nguon: 'Nhập tay' }));
+        if (!ok) return void (loi.textContent = 'Không lưu được vì bộ nhớ trình duyệt đã đầy. Hãy xóa bớt câu hỏi/hình cũ hoặc dùng hình nhỏ hơn.');
+        hop.close(); nganHang(); thongBao(sua ? 'Đã lưu thay đổi.' : 'Đã thêm câu hỏi.');
+      } }, sua ? 'Lưu thay đổi' : 'Lưu câu hỏi')));
+  hop.addEventListener('paste', ev => {         // dán ảnh từ clipboard
+    const f = [...(ev.clipboardData?.files || [])].find(x => x.type.startsWith('image/'));
+    if (f) { ev.preventDefault(); nhanAnh(f); }
+  });
+}
+
+/* ============================================================
+   Sao lưu & khôi phục
+   ============================================================
+   Một file JSON chứa dữ liệu của cả hai mục (CLC, TIMO): câu hỏi người dùng (kèm hình), lịch sử, thống kê từng câu
+   (cũng là sổ câu sai), cài đặt và số câu mỗi ngày. Không đưa bài thi dở dang vào vì đồng hồ thi tính theo giờ tuyệt đối.
+   File khôi phục không được tin: mọi giá trị đi qua lamSachKhoa() trước khi ghi vào localStorage. */
+const RE_KHOA_LUU = /^(clc|timo)\.(cauHoi|lichSu|thongKe|cai|ngay)\.v1$/;
+const KHOA_SAO_LUU = 'luyenthi.saoLuu';       // ngày giờ lần tải sao lưu gần nhất (không nằm trong file sao lưu)
+const MUC_LUU = ['cauHoi', 'lichSu', 'thongKe', 'cai', 'ngay'];
+const RE_ID_CAU = /^(?:mau-\d+|timo-mau-\d+|u[0-9a-z]{3,40})$/;
+const so = (v, max = 1e9) => (Number.isFinite(v) && v >= 0 ? Math.min(v, max) : 0);
+const khoaAnToan = k => typeof k === 'string' && k.length <= 60 && !['__proto__', 'constructor', 'prototype'].includes(k);
+
+function lamSachKhoa(loai, v) {          // trả về giá trị đã làm sạch, hoặc null nếu sai cấu trúc
+  const laObj = x => x && typeof x === 'object' && !Array.isArray(x);
+  if (loai === 'cauHoi') return Array.isArray(v) ? v.map(hopLeCau).filter(Boolean) : null;
+  if (loai === 'lichSu') {
+    if (!Array.isArray(v)) return null;
+    return v.filter(e => laObj(e) && typeof e.id === 'string' && typeof e.ngay === 'string' && !isNaN(Date.parse(e.ngay)))
+      .slice(-500).map(e => {
+        const theoMon = {};
+        if (laObj(e.theoMon)) Object.entries(e.theoMon).slice(0, 60).forEach(([m, x]) => { if (khoaAnToan(m) && laObj(x)) theoMon[m] = { dung: so(x.dung), tong: so(x.tong) }; });
+        return { id: e.id.slice(0, 40), loai: e.loai === 'thi' ? 'thi' : 'luyen', ten: String(e.ten ?? '').slice(0, 120), ngay: e.ngay.slice(0, 40),
+                 dung: so(e.dung), tong: so(e.tong), diem: so(e.diem), toiDa: so(e.toiDa) || 10, giay: so(e.giay), theoMon };
+      });
+  }
+  if (loai === 'thongKe') {
+    if (!laObj(v)) return null;
+    const r = {};
+    Object.entries(v).forEach(([id, o]) => {
+      if (!RE_ID_CAU.test(id) || !laObj(o)) return;
+      const x = { d: so(o.d), s: so(o.s), cuoi: o.cuoi === 'd' || o.cuoi === 's' ? o.cuoi : '' };
+      if (Number.isInteger(o.h) && o.h >= 0 && o.h <= HOP_CUOI) x.h = o.h;
+      if (typeof o.den === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(o.den)) x.den = o.den;
+      r[id] = x;
+    });
+    return r;
+  }
+  if (loai === 'cai') return laObj(v) ? { ...(v.anMau === true ? { anMau: true } : {}), ...(Number.isInteger(v.mucTieu) && v.mucTieu >= 1 && v.mucTieu <= 500 ? { mucTieu: v.mucTieu } : {}) } : null;
+  if (loai === 'ngay') {
+    if (!laObj(v)) return null;
+    const r = {};
+    Object.entries(v).forEach(([k, o]) => { if (/^\d{4}-\d{2}-\d{2}$/.test(k) && laObj(o)) r[k] = { c: so(o.c, 1e5), d: so(o.d, 1e5), m: so(o.m, 500) || 10 }; });
+    return r;
+  }
+  return null;
+}
+
+function taoSaoLuu() {
+  const du = {};
+  (kho ? Array.from({ length: kho.length }, (_, i) => kho.key(i)) : Object.keys(boNho)).forEach(k => {
+    if (RE_KHOA_LUU.test(k)) { const v = doc(k, null); if (v != null) du[k] = v; }
+  });
+  return { app: 'luyen-thi-clc', phienBan: 1, ngay: new Date().toISOString(), duLieu: du };
+}
+
+// Đọc và kiểm tra file sao lưu; trả về dữ liệu đã làm sạch kèm tóm tắt từng mục để hiện trước khi khôi phục
+function docSaoLuu(van) {
+  let j; try { j = JSON.parse(van); } catch (e) { throw new Error('File không phải JSON hợp lệ.'); }
+  if (!j || j.app !== 'luyen-thi-clc' || !j.duLieu || typeof j.duLieu !== 'object') throw new Error('Đây không phải file sao lưu của app này. (Để nhập riêng câu hỏi, hãy dùng Ngân hàng đề → Nhập từ file.)');
+  const du = {};
+  Object.entries(j.duLieu).forEach(([k, v]) => {
+    const m = RE_KHOA_LUU.exec(k); if (!m) return;
+    const s = lamSachKhoa(m[2], v); if (s != null) du[k] = s;
+  });
+  if (!Object.keys(du).length) throw new Error('File sao lưu không chứa dữ liệu nào dùng được.');
+  const dem = (k, f) => (du[k] ? f(du[k]) : 0);
+  const tomTat = ['clc', 'timo'].map(b => ({ bo: BO_DE[b].nhan,
+    cau: dem(b + '.cauHoi.v1', a => a.length), luot: dem(b + '.lichSu.v1', a => a.length), ngay: dem(b + '.ngay.v1', o => Object.keys(o).length) }));
+  return { du, tomTat, ngay: typeof j.ngay === 'string' ? j.ngay : '' };
+}
+
+// cheDo 'gop': giữ dữ liệu hiện có, thêm phần mới; 'thay': xóa dữ liệu hiện có rồi ghi bản sao lưu.
+// Ghi lỗi giữa chừng (đầy bộ nhớ) thì trả lại nguyên trạng.
+function khoiPhuc(du, cheDo) {
+  if (!kho) throw new Error('Trình duyệt đang chặn lưu dữ liệu nên không khôi phục được.');
+  const tatCa = ['clc.', 'timo.'].flatMap(tt => MUC_LUU.map(m => tt + m + '.v1'));
+  const cu = Object.fromEntries(tatCa.map(k => [k, kho.getItem(k)]));
+  const moi = {};
+  ['clc.', 'timo.'].forEach(tt => {
+    const k = m => tt + m + '.v1', mau = tt === 'timo.' ? CAU_TIMO : CAU_MAU;
+    if (cheDo === 'thay') { MUC_LUU.forEach(m => { if (du[k(m)] != null) moi[k(m)] = du[k(m)]; else moi[k(m)] = null; }); return; }
+    const hienCau = doc(k('cauHoi'), []), idMap = {}, themCau = [];
+    const co = new Map(mau.concat(hienCau).map(q => [khoaTrung(q), q.id])), dung = new Set(hienCau.map(q => q.id));
+    (du[k('cauHoi')] || []).forEach(q => {          // câu trùng nội dung với câu đã có thì dùng lại id cũ để thống kê gộp đúng chỗ
+      const kt = khoaTrung(q);
+      if (co.has(kt)) { idMap[q.id] = co.get(kt); return; }
+      const id = dung.has(q.id) ? taoId() : q.id;
+      idMap[q.id] = id; dung.add(id); co.set(kt, id); themCau.push({ ...q, id });
+    });
+    if (du[k('cauHoi')]) moi[k('cauHoi')] = hienCau.concat(themCau);
+    if (du[k('thongKe')]) {
+      const tk = doc(k('thongKe'), {});
+      Object.entries(du[k('thongKe')]).forEach(([id, o]) => {
+        const nid = idMap[id] ?? (/^(?:timo-)?mau-/.test(id) ? id : null);
+        if (nid && (!tk[nid] || tk[nid].d + tk[nid].s < o.d + o.s)) tk[nid] = o;     // giữ bên có nhiều lịch sử hơn
+      });
+      moi[k('thongKe')] = tk;
+    }
+    if (du[k('lichSu')]) {
+      const ls = doc(k('lichSu'), []), co2 = new Set(ls.map(e => e.id));
+      moi[k('lichSu')] = ls.concat(du[k('lichSu')].filter(e => !co2.has(e.id))).sort((a, b) => Date.parse(a.ngay) - Date.parse(b.ngay)).slice(-500);
+    }
+    if (du[k('ngay')]) {
+      const nk = doc(k('ngay'), {});
+      Object.entries(du[k('ngay')]).forEach(([d, o]) => { if (!nk[d] || nk[d].c < o.c) nk[d] = o; });
+      moi[k('ngay')] = nk;
+    }
+    if (du[k('cai')]) moi[k('cai')] = { ...du[k('cai')], ...doc(k('cai'), {}) };
+  });
+  try {
+    Object.entries(moi).forEach(([k, v]) => { if (v == null) kho.removeItem(k); else kho.setItem(k, JSON.stringify(v)); });
+  } catch (e) {
+    Object.entries(cu).forEach(([k, v]) => { try { if (v == null) kho.removeItem(k); else kho.setItem(k, v); } catch (e2) { /* hết cách */ } });
+    throw new Error('Không ghi được vì bộ nhớ trình duyệt không đủ chỗ. Dữ liệu hiện tại được giữ nguyên.');
+  }
+}
+
+function canNhacSaoLuu() {
+  if (!kho) return false;
+  const coDL = cauNguoiDung().length > 0 || doc(KHOA.lichSu, []).length >= 3;
+  const gan = Date.parse(kho.getItem(KHOA_SAO_LUU) || '');
+  return coDL && !(gan && Date.now() - gan < 14 * 864e5);
+}
+
+function hopThoaiSaoLuu() {
+  const tomTat = ['clc', 'timo'].map(b => `${BO_DE[b].nhan}: ${doc(BO_DE[b].tienTo + 'cauHoi.v1', []).length} câu bạn nhập, ${doc(BO_DE[b].tienTo + 'lichSu.v1', []).length} lượt làm bài`);
+  const gan = kho && kho.getItem(KHOA_SAO_LUU);
+  const inFile = h('input', { type: 'file', accept: '.json,application/json' });
+  const xem = h('div'), loi = h('p', { style: 'color:var(--sai);margin:8px 0 0' });
+  const nutKp = h('button', { class: 'btn', disabled: true }, 'Khôi phục');
+  const radio = (v, nhan, mt, chon) => h('label', { style: 'display:flex;gap:8px;align-items:flex-start;margin:6px 0;cursor:pointer' },
+    h('input', { type: 'radio', name: 'che-do-kp', value: v, checked: chon, style: 'margin-top:5px;accent-color:var(--nhan)' }), h('span', null, h('b', null, nhan), h('br'), h('span', { class: 'meta' }, mt)));
+  const vungRadio = h('div', { style: 'display:none' }, radio('gop', 'Gộp', 'Giữ dữ liệu đang có và thêm phần chưa có (câu trùng được bỏ qua). Nên dùng khi chuyển từ máy khác sang.', true),
+    radio('thay', 'Thay thế', 'Xóa toàn bộ dữ liệu hiện có của CLC và TIMO, chỉ giữ dữ liệu trong file.', false));
+  const hop = moHop(
+    h('h2', { style: 'font-size:1.2rem;margin-bottom:10px' }, 'Sao lưu & chuyển dữ liệu'),
+    h('p', { class: 'meta' }, 'Câu hỏi bạn nhập (kèm hình), lịch sử, thống kê, sổ câu sai và mục tiêu hằng ngày chỉ nằm trong trình duyệt này. Xóa dữ liệu duyệt web hoặc đổi máy là mất. Hãy tải bản sao lưu để giữ an toàn hoặc chuyển sang máy khác (file chứa cả hai mục CLC và TIMO).'),
+    h('ul', { class: 'meta', style: 'margin:6px 0 12px;padding-left:20px' }, tomTat.map(t => h('li', null, t))),
+    h('div', { class: 'hang' },
+      h('button', { class: 'btn', onclick: () => {
+        const ngay = new Date(); const j = taoSaoLuu();
+        taiXuong(`luyen-thi-sao-luu-${khoaNgay(ngay)}.json`, new Blob([JSON.stringify(j)], { type: 'application/json' }));
+        if (kho) try { kho.setItem(KHOA_SAO_LUU, ngay.toISOString()); } catch (e) { /* bỏ qua */ }
+        thongBao('Đã tải bản sao lưu về máy.');
+      } }, 'Tải bản sao lưu (.json)'),
+      gan ? h('span', { class: 'meta', style: 'margin:0' }, 'Lần sao lưu gần nhất: ' + ngayGio(gan)) : h('span', { class: 'meta', style: 'margin:0' }, 'Chưa sao lưu lần nào.')),
+    h('hr', { style: 'border:0;border-top:1px solid var(--vien);margin:18px 0' }),
+    h('h3', { style: 'font-size:1.05rem;margin-bottom:8px' }, 'Khôi phục từ bản sao lưu'),
+    truong('Chọn file sao lưu (.json)', inFile),
+    xem, vungRadio, loi,
+    h('div', { class: 'hang', style: 'justify-content:flex-end;margin-top:14px' },
+      h('button', { class: 'btn vien', onclick: () => hop.close() }, 'Đóng'), nutKp));
+  let ketQua = null;
+  inFile.addEventListener('change', async () => {
+    ketQua = null; nutKp.disabled = true; vungRadio.style.display = 'none'; loi.textContent = ''; xem.replaceChildren();
+    const f = inFile.files[0]; if (!f) return;
+    try {
+      if (f.size > 60e6) throw new Error('File quá lớn (tối đa 60 MB).');
+      ketQua = docSaoLuu(await f.text());
+      xem.replaceChildren(h('p', { class: 'meta' }, 'Bản sao lưu' + (ketQua.ngay ? ' tạo lúc ' + ngayGio(ketQua.ngay) : '') + ' gồm:'),
+        h('ul', { class: 'meta', style: 'margin:4px 0 10px;padding-left:20px' }, ketQua.tomTat.map(t => h('li', null, `${t.bo}: ${t.cau} câu hỏi, ${t.luot} lượt làm bài, ${t.ngay} ngày có làm bài`))));
+      vungRadio.style.display = ''; nutKp.disabled = false;
+    } catch (err) { loi.textContent = err.message || 'Không đọc được file.'; }
+  });
+  nutKp.addEventListener('click', () => {
+    const che = hop.querySelector('input[name=che-do-kp]:checked')?.value || 'gop';
+    if (che === 'thay' && !confirm('Thay thế sẽ xóa toàn bộ dữ liệu hiện có (cả CLC và TIMO) và chỉ giữ dữ liệu trong file. Tiếp tục?')) return;
+    try { khoiPhuc(ketQua.du, che); } catch (err) { loi.textContent = err.message; return; }
+    hop.close(); di('trangchu'); thongBao(che === 'thay' ? 'Đã khôi phục dữ liệu từ bản sao lưu.' : 'Đã gộp dữ liệu từ bản sao lưu.');
+  });
+}
+
+/* ============================================================
+   Khởi động
+   ============================================================ */
+document.getElementById('nam').textContent = new Date().getFullYear();
+
+// Chân trang: sao lưu dữ liệu và (nếu trình duyệt cho phép) cài như một ứng dụng
+const nutChan = document.getElementById('chan-nut');
+nutChan.style.marginBottom = '8px';
+nutChan.append(h('button', { onclick: hopThoaiSaoLuu }, 'Sao lưu / khôi phục dữ liệu'));
+let suKienCai = null;
+window.addEventListener('beforeinstallprompt', ev => {
+  ev.preventDefault(); suKienCai = ev;
+  const khung = h('span', null, h('span', { class: 'cach' }, '|'), h('button', { onclick: async () => {
+    if (!suKienCai) return;
+    suKienCai.prompt(); await suKienCai.userChoice.catch(() => {}); suKienCai = null; khung.remove();
+  } }, 'Cài đặt như ứng dụng'));
+  nutChan.append(khung);
+});
+// Chạy offline: service worker chỉ hoạt động trên http(s) (không phải khi mở file trực tiếp)
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { /* không bắt buộc */ });
+
+// Áp dụng mục đang chọn: tên, màu chủ đạo, tiêu đề tab và nút chuyển mục
+function ganBoDe() {
+  const b = BO_DE[boDe];
+  document.documentElement.dataset.bo = boDe;
+  document.title = b.ten;
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', boDe === 'timo' ? '#4338ca' : '#0f766e');
+  document.getElementById('th-nhan').textContent = b.nhan;
+  document.getElementById('th-ten').textContent = b.ten;
+  document.querySelectorAll('#bode button').forEach(n => n.setAttribute('aria-pressed', String(n.dataset.bo === boDe)));
+}
+function doiBoDe(k) {
+  if (k === boDe) return;
+  dungDongHo();
+  boDe = k;
+  try { localStorage.setItem('luyenthi.boDe', k); } catch (e) { /* không lưu được thì bỏ qua */ }
+  ganBoDe(); di('trangchu');
+}
+document.getElementById('bode').append(...Object.entries(BO_DE).map(([k, b]) => h('button', { 'data-bo': k, onclick: () => doiBoDe(k) }, b.nhan)));
+ganBoDe();
+const TRANG = { trangchu: trangChu, luyen: luyenCauHinh, on: onCauSai, thi: thiCauHinh, nganhang: nganHang, thongke: thongKe };
+// Gộp tên trường gọi khác (ví dụ "Năng Khiếu" → "Năng Khiếu Sư Phạm") trong ngân hàng CLC đã lưu: đổi chủ đề, bỏ câu bị trùng hẳn với câu đã có.
+function hopNhatTenTruong() {
+  try {
+    const khoa = 'clc.cauHoi.v1', ds = doc(khoa, []);
+    if (!Array.isArray(ds)) return;
+    const dau = new Set(ds.filter(q => q && truongDeCua(q) && chuDeChuan(q) === q.chuDe).map(khoaTrung)), ra = []; let doi = 0, bo = 0;
+    ds.forEach(q => {
+      if (!q || !truongDeCua(q) || chuDeChuan(q) === q.chuDe) { ra.push(q); return; }
+      const c = { ...q, chuDe: chuDeChuan(q) }, k = khoaTrung(c);
+      if (dau.has(k)) { bo++; return; }
+      dau.add(k); ra.push(c); doi++;
+    });
+    if (doi || bo) { ghi(khoa, ra); }
+  } catch (e) { /* không đọc được thì để nguyên */ }
+}
+khoSan.then(() => { hopNhatTenTruong(); di('trangchu'); });
+</script>
+</body>
+</html>
