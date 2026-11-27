@@ -1091,20 +1091,24 @@ function chonCanBang(mons, tong) {
    Tên đề là năm học ("2023–2024") hoặc đề đánh số ("Đề luyện 01", "Đề số 2", "Test 3"). */
 const RE_DE_TRUONG = /^(.+?)\s+((?:19|20)\d\d(?:\s*[–—-]\s*(?:19|20)\d\d)?(?:\s*\([^)]*\))?|(?:Đề|Test)(?:\s+[^\d\s]+)?\s+\d{1,3})$/i;     // năm học có thể kèm ghi chú trong ngoặc: "2020–2021 (nâng cao)"
 const TEN_TRUONG_KHAC = { 'nang khieu': 'Năng Khiếu Sư Phạm' };      // cách gọi khác của cùng một trường (khóa: tên bỏ dấu, chữ thường) → tên chuẩn
-const truongDeCua = q => {
-  const m = RE_DE_TRUONG.exec(String(q.chuDe || '').trim());
+// truongDeCua và monDeCua được gọi cho mọi câu ở nhiều màn hình, mà cả ngân hàng chỉ có vài chục chủ đề/môn khác nhau: nhớ kết quả theo chuỗi
+const nhoTheoChuoi = tinh => { const nho = new Map(); return s => { let v = nho.get(s); if (v === undefined) nho.set(s, v = tinh(s)); return v; }; };
+const tachDeTruong = nhoTheoChuoi(chuDe => {
+  const m = RE_DE_TRUONG.exec(chuDe.trim());
   if (!m) return null;
   const ten = m[1].trim();
-  return { tenTruong: TEN_TRUONG_KHAC[boDau(ten)] || ten, de: m[2].replace(/\s*[–—-]\s*/, '–') };
-};
+  return Object.freeze({ tenTruong: TEN_TRUONG_KHAC[boDau(ten)] || ten, de: m[2].replace(/\s*[–—-]\s*/, '–') });
+});
+const truongDeCua = q => tachDeTruong(String(q.chuDe || ''));
 const chuDeChuan = q => { const t = truongDeCua(q); return t ? t.tenTruong + ' ' + t.de : String(q.chuDe || ''); };
 const laDeNam = de => /^(19|20)\d\d/.test(de);                    // đề theo năm học (mới nhất lên trước) hay đề đánh số (theo thứ tự tăng dần)
 const tenBaiThi = (tenTruong, de, mon) => (laDeNam(de) ? `Đề ${tenTruong} ${de}` : `${tenTruong} · ${de}`) + ` · ${mon}`;
 const MON_TRUONG = ['Toán', 'Tiếng Việt', 'Tiếng Anh'];        // ba môn thi vào lớp 6 chuyên/chất lượng cao; luôn hiện đủ ba mục
-const monDeCua = q => {          // gom các cách ghi môn ("Tieng Anh", "English", "Văn"...) về ba môn chuẩn; môn lạ giữ nguyên
-  const m = String(q.mon || '').trim(), t = m.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
+const chuanMon = nhoTheoChuoi(mon => {          // gom các cách ghi môn ("Tieng Anh", "English", "Văn"...) về ba môn chuẩn; môn lạ giữ nguyên
+  const m = mon.trim(), t = m.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
   return /^toan(\s|$)/.test(t) ? 'Toán' : /^(tieng\s*)?viet(\s|$)|^van(\s|$)/.test(t) ? 'Tiếng Việt' : /^(tieng\s*)?anh(\s|$)|^english(\s|$)/.test(t) ? 'Tiếng Anh' : m;
-};
+});
+const monDeCua = q => chuanMon(String(q.mon || ''));
 function dsDeTruong(mon) {       // [{tenTruong, des: [{de, cau: [q]}]}] của một môn (bỏ trống = mọi môn): trường theo A–Z, đề mới nhất lên trước
   const mapT = new Map();
   tatCaCau().forEach(q => {
@@ -1127,8 +1131,9 @@ function thiTheoTruong(dangThi) {
   if (!cacMon.includes(thiMonTruong)) thiMonTruong = cacMon[0];
   const cacTruong = dsDeTruong();                                  // mọi môn: dùng cho hàng nút chọn trường
   if (thiTruongChon && !cacTruong.some(t => t.tenTruong === thiTruongChon)) thiTruongChon = '';
-  const demDe = (m, truong) => dsDeTruong(m).filter(t => !truong || t.tenTruong === truong).reduce((n, t) => n + t.des.length, 0);
-  const mon = thiMonTruong, truongs = dsDeTruong(mon).filter(t => !thiTruongChon || t.tenTruong === thiTruongChon);
+  const theoMon = new Map(cacMon.map(m => [m, dsDeTruong(m)]));   // gom một lần cho mỗi môn: số đề trên các nút được đếm rất nhiều lần
+  const demDe = (m, truong) => theoMon.get(m).filter(t => !truong || t.tenTruong === truong).reduce((n, t) => n + t.des.length, 0);
+  const mon = thiMonTruong, truongs = theoMon.get(mon).filter(t => !thiTruongChon || t.tenTruong === thiTruongChon);
   const chonTruong = ten => {                                      // đổi trường; nếu môn đang xem không có đề của trường đó thì chuyển sang môn có đề
     thiTruongChon = ten;
     if (!demDe(thiMonTruong, ten)) thiMonTruong = cacMon.find(m => demDe(m, ten)) || thiMonTruong;
@@ -1168,7 +1173,7 @@ function thiCauHinh() {
   const mons = dsMon();
   if (!mons.length) return dat(tieuDe('Thi thử'), h('div', { class: 'the trong' }, 'Ngân hàng đang trống. ', h('button', { class: 'btn nho', onclick: () => di('nganhang') }, 'Nhập câu hỏi')));
   const dangThi = doc(KHOA.dangThi, null);
-  const coTruong = boDe === 'clc' && dsDeTruong().length > 0;
+  const coTruong = boDe === 'clc' && tatCaCau().some(q => truongDeCua(q));
   if (!coTruong) thiTab = 'tong';
   const tab = coTruong ? h('div', { class: 'hang', style: 'margin:0 0 14px' },
     [['tong', 'Đề tổng hợp'], ['truong', 'Đề của các trường']].map(([k, t]) => h('button', { class: 'btn nho' + (thiTab === k ? '' : ' vien'), onclick: () => { thiTab = k; thiCauHinh(); } }, t))) : null;
@@ -1374,7 +1379,7 @@ function onCauSai() {
   const dueDs = trongSoDs.filter(q => denHan(tk[q.id]));
   const trang = { loc: '', hien: 30 };
   const danhSach = h('div');
-  const dinhDang = k => { const [y, m, d] = k.split('-'); return `${d}/${m}`; };
+  const dinhDang = k => { const [, m, d] = k.split('-'); return `${d}/${m}`; };
   const selMon = h('select', { onchange: e => { trang.loc = e.target.value; trang.hien = 30; ve(); } },
     h('option', { value: '' }, 'Tất cả ' + (motMon() ? 'chủ đề' : 'môn')),
     [...new Set(trongSoDs.map(q => nhomCua(q, motMon())))].map(m => h('option', { value: m }, m)));
@@ -2083,11 +2088,13 @@ const TRANG = { trangchu: trangChu, luyen: luyenCauHinh, on: onCauSai, thi: thiC
 // Gộp tên trường gọi khác (ví dụ "Năng Khiếu" → "Năng Khiếu Sư Phạm") trong ngân hàng CLC đã lưu: đổi chủ đề, bỏ câu bị trùng hẳn với câu đã có.
 function hopNhatTenTruong() {
   try {
-    const khoa = 'clc.cauHoi.v1', ds = doc(khoa, []);
-    if (!Array.isArray(ds)) return;
-    const dau = new Set(ds.filter(q => q && truongDeCua(q) && chuDeChuan(q) === q.chuDe).map(khoaTrung)), ra = []; let doi = 0, bo = 0;
+    // đang ở mục CLC thì dùng chung bản đã đọc của cauNguoiDung(), khỏi giải mã cả ngân hàng (hàng chục triệu ký tự) hai lần lúc mở app
+    const khoa = 'clc.cauHoi.v1', ds = boDe === 'clc' ? cauNguoiDung() : doc(khoa, []);
+    const canDoi = q => !!q && !!truongDeCua(q) && chuDeChuan(q) !== q.chuDe;
+    if (!Array.isArray(ds) || !ds.some(canDoi)) return;           // thường không có gì để đổi: khỏi tạo khóa so trùng cho mọi câu
+    const dau = new Set(ds.filter(q => q && truongDeCua(q) && !canDoi(q)).map(khoaTrung)), ra = []; let doi = 0, bo = 0;
     ds.forEach(q => {
-      if (!q || !truongDeCua(q) || chuDeChuan(q) === q.chuDe) { ra.push(q); return; }
+      if (!canDoi(q)) { ra.push(q); return; }
       const c = { ...q, chuDe: chuDeChuan(q) }, k = khoaTrung(c);
       if (dau.has(k)) { bo++; return; }
       dau.add(k); ra.push(c); doi++;
