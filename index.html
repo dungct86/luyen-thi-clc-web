@@ -232,6 +232,26 @@ summary{cursor:pointer;font-weight:600;color:var(--nhan-dam)}
 ul.loi{margin:6px 0 0;padding-left:20px;color:var(--sai);font-size:.85rem}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--chu);color:var(--nen);padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:calc(100vw - 32px);text-align:center}
 #toast.hien{opacity:1;transform:translateX(-50%)}
+/* Điện thoại: thanh chức năng chuyển xuống đáy màn hình, đủ 6 mục có biểu tượng, không phải vuốt ngang.
+   --cao-day = chiều cao thanh này; phần chừa cuối trang, chỗ cuộn tới và thông báo nổi đều tính theo nó. */
+@media (max-width:700px){
+  :root{--cao-day:71px}
+  html{scroll-padding-bottom:var(--cao-day)}
+  body{padding-bottom:var(--cao-day)}
+  .thanh-menu{position:fixed;top:auto;bottom:0;left:0;right:0;border-bottom:0;border-top:1px solid var(--vien);box-shadow:0 -6px 16px rgba(0,43,140,.1)}
+  .menu{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;padding:4px;overflow:visible}
+  .menu button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;min-height:62px;padding:6px 1px 3px;font-size:.68rem;line-height:1.2;white-space:normal;text-align:center;text-wrap:balance}
+  .menu button:not([aria-current=page]):hover{background:none;color:var(--phu)}
+  .menu button::before{content:"";flex:none;width:22px;height:22px;background:currentColor;-webkit-mask:var(--bieu) center/contain no-repeat;mask:var(--bieu) center/contain no-repeat}
+  .menu button[data-trang=trangchu]{--bieu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10'/%3E%3C/svg%3E")}
+  .menu button[data-trang=luyen]{--bieu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20l1-5L16 4l4 4L9 19zM13.5 6.5l4 4'/%3E%3C/svg%3E")}
+  .menu button[data-trang=on]{--bieu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 11a8 8 0 0 0-14.3-4M4 3v5h5M4 13a8 8 0 0 0 14.3 4M20 21v-5h-5'/%3E%3C/svg%3E")}
+  .menu button[data-trang=thi]{--bieu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13.5' r='7.5'/%3E%3Cpath d='M12 9.5v4l3 2M9 2h6M12 2v4'/%3E%3C/svg%3E")}
+  .menu button[data-trang=nganhang]{--bieu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 19V6a3 3 0 0 1 3-3h11v18H7a2 2 0 0 1 0-4h12'/%3E%3C/svg%3E")}
+  .menu button[data-trang=thongke]{--bieu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h16M7 16v-5M12 16V5M17 16V9'/%3E%3C/svg%3E")}
+  .thanh-thi{top:8px}
+  #toast{bottom:calc(var(--cao-day) + 12px)}
+}
 /* Công thức (KaTeX) và hình trong câu hỏi */
 .toan.khoi{display:block;margin:.4em 0;overflow-x:auto;overflow-y:hidden}
 .toan .katex{font-size:1.05em}
@@ -475,7 +495,8 @@ const khoSan = (async () => {
       cu.forEach(k => { try { localStorage.removeItem(k); } catch (e) { /* bỏ qua */ } });
     }
     const loiGhi = () => thongBao('Không lưu được dữ liệu vào trình duyệt (bộ nhớ đầy hoặc bị chặn).');
-    const ghiBen = f => { try { const tx = db.transaction('kv', 'readwrite'); f(tx.objectStore('kv')); tx.onabort = loiGhi; } catch (e) { loiGhi(); } };
+    // commit() chốt giao dịch ngay: nếu để tự chốt thì trang phải còn sống để nhận phản hồi, nên tải lại hay đóng tab ngay sau khi ghi làm mất dữ liệu
+    const ghiBen = f => { try { const tx = db.transaction('kv', 'readwrite'); f(tx.objectStore('kv')); tx.onabort = loiGhi; if (tx.commit) tx.commit(); } catch (e) { loiGhi(); } };
     const kenh = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('luyenthi-kho') : null;     // nhiều tab cùng mở: giữ bản trong bộ nhớ khớp nhau
     if (kenh) kenh.onmessage = e => { const m = e.data; if (m && typeof m.k === 'string') { if (m.v == null) bang.delete(m.k); else bang.set(m.k, m.v); } };
     const bao = (k, v) => { try { kenh && kenh.postMessage({ k, v }); } catch (e) { /* bỏ qua */ } };
@@ -561,7 +582,8 @@ function taiThuVien(ten) {
    Văn bản câu hỏi có thể chứa $x^2$, $$\frac{a}{b}$$, \(...\) hoặc \[...\]. vb() trả về text thường
    và các <span class="toan"> mang mã TeX trong thuộc tính; KaTeX chỉ được nạp (từ CDN) khi trang có công thức,
    và KaTeX tự dựng DOM nên không có chỗ nào dùng innerHTML. Chưa nạp được (offline) thì hiện nguyên mã gốc. */
-const RE_TOAN = /\$\$([\s\S]+?)\$\$|\$(?![\s$])((?:[^$\n\\]|\\[\s\S])+?)\$(?!\d)|\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g;
+// trong $...$ không nhận \( \) \[ \], để hai dấu $ tiền tệ không nuốt công thức \(..\) nằm giữa chúng
+const RE_TOAN = /\$\$([\s\S]+?)\$\$|\$(?!\$)((?:[^$\n\\]|\\(?![()\[\]])[\s\S])+?)\$|\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g;
 function vb(s) {
   s = String(s ?? '');
   if (!/[$\\]/.test(s)) return s;
@@ -569,7 +591,10 @@ function vb(s) {
   RE_TOAN.lastIndex = 0;
   while ((m = RE_TOAN.exec(s))) {
     const tex = m[1] ?? m[2] ?? m[3] ?? m[4];
-    if (m[2] != null && /\s$/.test(tex)) continue;       // "$5 và $ 10": chữ chạy qua dấu $ không phải công thức
+    // $...$ có khoảng trắng ở mép, hoặc có chữ số ngay sau dấu $ đóng, chỉ là công thức khi bên trong có lệnh TeX
+    // (\overline, \Rightarrow…); không thì là chữ nằm giữa hai dấu $ ("$5 và $10"). Loại thì quét lại ngay sau dấu $ mở,
+    // vì dấu $ đóng có thể mở công thức kế tiếp.
+    if (m[2] != null && (/^\s|\s$/.test(tex) || /\d/.test(s.charAt(RE_TOAN.lastIndex))) && !/\\[a-zA-Z]/.test(tex)) { RE_TOAN.lastIndex = m.index + 1; continue; }
     if (m.index > cuoi) kq.push(s.slice(cuoi, m.index));
     const khoi = m[1] != null || m[4] != null;
     kq.push(h('span', { class: 'toan' + (khoi ? ' khoi' : ''), 'data-tex': tex.trim(), 'data-khoi': khoi ? '1' : null }, m[0]));
@@ -862,7 +887,7 @@ const diemQuyDoi = e => e.diem / (e.toiDa || 10) * thangDiem();     // đưa v�
 // Ngân hàng chỉ có một môn (như TIMO: chỉ có Toán) thì thống kê/chia đề theo chủ đề thay vì theo môn
 const motMon = () => dsMon().length === 1;
 const nhomCua = (q, mot) => (mot ? q.chuDe : q.mon);
-function luuLuot(loai, kq, giay, ten) {
+function luuLuot(loai, kq, giay, ten, id = taoId()) {       // id đã có trong lịch sử thì cập nhật lượt đó
   const dung = kq.filter(x => dungCau(x.q, x.chon)).length;
   const theoMon = {}, mot = motMon();
   kq.forEach(x => {
@@ -871,10 +896,11 @@ function luuLuot(loai, kq, giay, ten) {
     m.tong++; if (dungCau(x.q, x.chon)) m.dung++;
   });
   const diemCau = BO_DE[boDe].diemCau;
-  const e = { id: taoId(), loai, ten, ngay: new Date().toISOString(), dung, tong: kq.length,
+  const e = { id, loai, ten, ngay: new Date().toISOString(), dung, tong: kq.length,
               diem: diemCau ? dung * diemCau : (kq.length ? Math.round(dung / kq.length * 1000) / 100 : 0),
               toiDa: diemCau ? kq.length * diemCau : 10, giay, theoMon };
-  const ls = doc(KHOA.lichSu, []); ls.push(e);
+  const ls = doc(KHOA.lichSu, []), cu = ls.findIndex(x => x.id === id);
+  if (cu >= 0) ls[cu] = e; else ls.push(e);
   ghi(KHOA.lichSu, ls.slice(-500));
   return e;
 }
@@ -891,7 +917,8 @@ function hienNav(trang) {
     if (b.dataset.trang === trang) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   });
 }
-function di(trang) { dungDongHo(); hienNav(trang); TRANG[trang](); window.scrollTo(0, 0); }
+let khiRoiLuyen = null;       // do phienLuyen đặt: báo cho người học biết khi họ rời bài đang luyện dở
+function di(trang) { const bao = khiRoiLuyen; khiRoiLuyen = null; dungDongHo(); hienNav(trang); TRANG[trang](); window.scrollTo(0, 0); if (bao) bao(); }
 // replaceChildren nhưng bỏ qua null/false (chuyển null thành chữ "null" là lỗi dễ gặp)
 function thay(el, ...nodes) { el.replaceChildren(...nodes.flat(Infinity).filter(x => x != null && x !== false)); }
 function dat(...nodes) { thay(app, ...nodes); }
@@ -1030,7 +1057,7 @@ function phienLuyen(ds, ten) {
         if (daChon != null || !oDien.value.trim()) return;
         const v = oDien.value.trim(), dung = khopDien(q, v);
         daChon = v; lam.add(i); kq.push({ q, chon: v });
-        ghiNhanCau(q, dung);
+        ghiNhanCau(q, dung); luu();
         oDien.disabled = true; btnKt.disabled = true; oDien.classList.add(dung ? 'dung' : 'sai');
         thay(vung,
           h('p', { class: 'phan-hoi ' + (dung ? 'dung' : 'sai') }, dung ? 'Chính xác!' : ['Chưa đúng. Đáp án đúng là ', vb(dungText(q)), '.']),
@@ -1043,7 +1070,7 @@ function phienLuyen(ds, ten) {
     } else nut = q.dapAn.map((t, k) => h('button', { class: 'dap-an', onclick: () => {
       if (daChon != null) return;
       daChon = k; lam.add(i); kq.push({ q, chon: k });
-      ghiNhanCau(q, k === q.dung);
+      ghiNhanCau(q, k === q.dung); luu();
       nut.forEach((b, j) => { b.disabled = true; if (j === q.dung) b.classList.add('dung'); else if (j === k) b.classList.add('sai'); });
       thay(vung,
         h('p', { class: 'phan-hoi ' + (k === q.dung ? 'dung' : 'sai') }, k === q.dung ? 'Chính xác!' : `Chưa đúng. Đáp án đúng là ${CHU_CAI[q.dung]}.`),
@@ -1056,13 +1083,22 @@ function phienLuyen(ds, ten) {
       h('div', { class: 'the' },
         h('div', { class: 'meta' }, `Câu ${i + 1}/${ds.length} · ${q.mon} · ${q.chuDe}`),
         h('div', { class: 'cau-nd' }, vb(q.nd)), hinhQ(q), h('div', { class: 'luoi-dap-an' }, nut), vung, h('div', { class: 'hang' }, nutLui, nutTiep)),
-      h('button', { class: 'btn vien nho', onclick: () => { if (!kq.length || confirm('Dừng luyện tập? Kết quả các câu đã làm vẫn được ghi nhận vào thống kê câu hỏi.')) di('luyen'); } }, 'Dừng'));
+      h('button', { class: 'btn vien nho', onclick: dungSom }, 'Dừng'));
+  };
+  // Dừng giữa chừng: xem kết quả của các câu đã trả lời
+  const dungSom = () => {
+    if (!kq.length) return di('luyen');
+    if (confirm(`Dừng luyện tập và xem kết quả? Bạn đã làm ${kq.length}/${ds.length} câu.`)) ketThuc();
   };
   const ketThuc = () => {
+    khiRoiLuyen = null;       // bài đã kết thúc, rời màn kết quả không cần báo nữa
     if (!kq.length) { di('luyen'); return thongBao('Bạn đã bỏ qua tất cả các câu nên chưa có kết quả để lưu.'); }
-    const e = luuLuot('luyen', kq, Math.round((Date.now() - bat) / 1000), ten);
-    hienKetQua(e, kq, { lamLai: () => di('luyen') });
+    hienKetQua(luu(), kq, { lamLai: () => di('luyen') });
   };
+  // Lượt luyện được ghi vào lịch sử ngay từ câu đầu rồi cập nhật sau mỗi câu, nên chuyển mục, tải lại trang hay đóng tab đều không mất
+  const idLuot = taoId(), tenBo = BO_DE[boDe].nhan;       // nhớ bộ đang luyện: lúc rời bài có thể đã đổi sang bộ kia
+  const luu = () => luuLuot('luyen', kq, Math.round((Date.now() - bat) / 1000), ten, idLuot);
+  khiRoiLuyen = () => { if (kq.length) thongBao(`Đã lưu ${kq.length} câu bạn vừa luyện vào lịch sử ${tenBo}.`); };
   ve();
 }
 
